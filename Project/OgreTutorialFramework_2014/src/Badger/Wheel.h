@@ -75,7 +75,7 @@ class Badger::Wheel final : public Badger::IRotatableComponent
 
         #pragma region Implementation data
 
-        float       m_diameter          { 5.f };    //!< The wheel diameter in metres. 
+        float       m_diameter          { 7.f };    //!< The wheel diameter in metres. 
         float       m_revolveModifier   { 1.f };    //!< A modifier used to change the way revolutions are applied. Should be clamped between -1.f and 1.f, fixes wrong rotation direction.
 
         #pragma endregion

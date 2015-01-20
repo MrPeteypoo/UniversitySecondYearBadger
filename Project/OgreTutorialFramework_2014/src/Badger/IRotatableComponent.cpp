@@ -9,7 +9,7 @@
 
 // Globals.
 const float angleLimit  { 0.34906585f };    //!< The angle limit used when rotation the component.
-const float tolerance   { 0.0125f };        //!< The tolerance used in detecting whether the angles are correct.
+const float tolerance   { 0.0125f };        //!< The tolerance used in detecting whether the angles are correct. Equates to +-0.7 degrees.
 
 
 

@@ -39,6 +39,15 @@ Badger& Badger::operator= (Badger&& move)
         m_handleBar = std::move (move.m_handleBar);
         m_luggageRack = std::move (move.m_luggageRack);
         m_wheels = std::move (move.m_wheels);
+
+        m_wheelBase = std::move (move.m_wheelBase);
+
+        m_acceleration = std::move (move.m_acceleration);
+        m_brakePower = std::move (move.m_brakePower);
+        
+        m_currentSpeed = std::move (move.m_currentSpeed);
+        m_maxSpeed = std::move (move.m_maxSpeed);
+        m_targetSpeedRate = std::move (move.m_targetSpeedRate);
     }
 
     return *this;
@@ -57,20 +66,16 @@ Badger::~Badger()
 void Badger::setSpeedRate (const float speed)
 {
     // Clamp the given speed rate and then scale it to between 0.f and 1.f.
-    const float min             { -1.f }, 
-                max             { 1.f }, 
-                clampedSpeed    { util::clamp (speed, min, max) },
-                scaledSpeed     { clampedSpeed * 0.5f + 0.5f };
-    
-    m_tracker.setNormalisedTarget (scaledSpeed);
+    const float min { -1.f }, max { 1.f };
+
+    m_targetSpeedRate = util::clamp (speed, min, max);
 }
 
 
 void Badger::setTurnRate (const float turn)
 {
     // Clamp the given turn rate.
-    const float min         { -1.f }, 
-                max         { 1.f }, 
+    const float min         { -1.f }, max { 1.f },
                 clampedTurn { util::clamp (turn, min, max) };
     
     // Ensure the handle bar follows the wheels.
@@ -92,8 +97,6 @@ void Badger::reset()
     m_node->setOrientation ({ });
     m_node->setScale ({ 200.f, 200.f, 200.f });
 
-    m_tracker.setValues (0.f, 5.f, 2.5, 2.49999f);
-
     // Reset the handle bar.
     m_handleBar->reset();
 
@@ -104,6 +107,10 @@ void Badger::reset()
     }
 
     setupWheels();
+
+    // Reset our speed.
+    m_currentSpeed = 0.f;
+    m_targetSpeedRate = 0.f;
 }
 
 #pragma endregion
@@ -135,11 +142,11 @@ bool Badger::initialise (OgreApplication* const ogre, Ogre::SceneNode* const roo
 
         // Load the child nodes.
         createChildren (ogre, name);
-        setupWheels();
 
-        // Finally we're finished!
-        m_tracker.setValues (0.f, 5.f, 2.5, 2.49999f);
+        // Prepare each element.
+        reset();
 
+        // Finally we're done!
         return true;
     }
 
@@ -159,15 +166,17 @@ bool Badger::initialise (OgreApplication* const ogre, Ogre::SceneNode* const roo
 
 void Badger::updateSimulation (const float deltaTime)
 {
-    // Scale the normalised target to -1.f/1.f. We'll use this to move and rotate in the correct direction.
-    const float modifier    { m_tracker.normalisedCurrent() * 2.f - 1.f };
+    // Ensure we have correct speed values.
+    updateSpeed (deltaTime);
+
+    // Calculate the distance to travel. Take the scale of the badger into account.
+    const float distance    { m_currentSpeed * deltaTime };
 
     // Simulate the badgers movement and rotation. Use a fudge-factor of 4 to make the rotation feel a little more natural.
-    moveForward (modifier, deltaTime);
-    rotate (modifier * 4, deltaTime);
+    moveForward (distance);
+    rotate (distance);
 
     // Update each component. We can ignore the luggage rack.
-    m_tracker.updateTime (deltaTime);
     m_handleBar->updateSimulation (deltaTime);
     
     for (auto& wheel : m_wheels)
@@ -181,11 +190,61 @@ void Badger::updateSimulation (const float deltaTime)
 
 #pragma region Simulation
 
-void Badger::moveForward (const float modifier, const float deltaTime)
+void Badger::updateSpeed (const float deltaTime)
 {
-    // Calculate the distance to travel. Take the scale of the badger into account.
-    const float distance    { m_maxSpeed * modifier * deltaTime };
+    // Calculate whether we've reached our target.
+    const float currentSpeedRate    { m_currentSpeed / m_maxSpeed };
 
+    if (!util::roughlyEquals (currentSpeedRate, m_targetSpeedRate, 0.001f))
+    {
+        // The modifier decides if we use negative or positive values.
+        const float modifier            { m_targetSpeedRate > currentSpeedRate ? 1.f : -1.f };
+
+        // Create the a variable ready for calculating the increase in speed.
+        float increase = 0.f;
+
+        // Detect if we're supposed to be braking.
+        if ((currentSpeedRate > 0.f && m_targetSpeedRate < 0.f) ||
+            (currentSpeedRate < 0.f && m_targetSpeedRate > 0.f))
+        {
+            // Instead of duplicating code we'll just use absolute values take advantage of the modifier.
+            const float absSpeed        { std::abs (m_currentSpeed) };
+
+            // Calculate whether we've braked too far and therefore should use some acceleration for accurate speed.
+            const float deltaBrake      { m_brakePower * deltaTime };
+            const float brakeDifference { absSpeed - deltaBrake };
+
+            if (brakeDifference < 0.f)
+            {
+                // Calculate the remainder to use for the acceleration.
+                const float brakeProportion { std::abs (brakeDifference / m_brakePower) };
+                const float acceleration    { m_acceleration * deltaTime * (1.f - brakeProportion) };
+
+                // The increase should be the brake speed + acceleration at the calculated proportion.
+                increase = (deltaBrake * brakeProportion + acceleration) * modifier;
+            }
+
+            else
+            {
+                // Just reduce the speed by the brake power.
+                increase = deltaBrake * modifier;
+            }
+        }
+
+        // Just increase speed to the target rate.
+        else
+        {
+            increase = m_acceleration * modifier * deltaTime;
+        }
+
+        // Finally update our speed.
+        setCurrentSpeed (m_currentSpeed + increase);
+    }
+}
+
+
+void Badger::moveForward (const float distance)
+{
     // Don't waste extra computation time.
     if (!util::roughlyEquals (distance, 0.f, 0.001f))
     {
@@ -205,10 +264,10 @@ void Badger::moveForward (const float modifier, const float deltaTime)
 }
 
 
-void Badger::rotate (const float modifier, const float deltaTime)
+void Badger::rotate (const float distance)
 {
     // Calculate the angle to rotate the badger by.
-    const float angle   { m_handleBar->currentYaw() * modifier * deltaTime };
+    const float angle   { distance * std::sin (m_handleBar->currentYaw()) / m_wheelBase };
 
     // Don't waste extra computation time.
     if (!util::roughlyEquals (angle, 0.f, 0.001f))
@@ -273,20 +332,26 @@ void Badger::setupWheels()
 
     for (unsigned int i = 0; i < m_wheels.size(); ++i)
     {
-        // Even indexes are wheels that are situated on the left.
+        // Even indices are wheels situated on the left.
         if (i % 2 == 0)
         {
             m_wheels[i]->setRevolveModifier (1.f);
             m_wheels[i]->setOrientation (leftOrientation);
         }
 
-        // Right wheels move in reverse.
+        // Right wheels needs a reverse modifier.
         else
         {
             m_wheels[i]->setRevolveModifier (-1.f);
             m_wheels[i]->setOrientation (rightOrientation);
         }
     }
+}
+
+
+void Badger::setCurrentSpeed (const float speed)
+{
+    m_currentSpeed = util::clamp (speed, -m_maxSpeed, m_maxSpeed);
 }
 
 #pragma endregion
