@@ -32,8 +32,12 @@ Simulation& Simulation::operator= (Simulation&& move)
 {
     if (this != &move)
     {
-        m_badger = std::move (move.m_badger);
+        m_badgerControlled = std::move (move.m_badgerControlled);
+        m_badgerPath = std::move (move.m_badgerPath);
         m_keyboard = std::move (move.m_keyboard);
+
+        m_speedRate = std::move (move.m_speedRate);
+        m_turnRate = std::move (move.m_turnRate);
     }
 
     return *this;
@@ -74,19 +78,20 @@ void Simulation::initialiseScene (OgreApplication* const ogre)
     util::createMaterial ("blue", "blue.png");
     util::createMaterial ("green", "green.png");
 
-    // Set up the badger.
-    m_badger = std::make_unique<Badger>();
-    m_badger2 = std::make_unique<Badger>();
-    m_badger->initialise (ogre, ogre->GetSceneManager()->getRootSceneNode(), "BadgerControlled");
-    m_badger2->initialise (ogre, ogre->GetSceneManager()->getRootSceneNode(), "BadgerPath");
+    // Set up the badgers.
+    m_badgerControlled = std::make_unique<Badger>();
+    m_badgerPath = std::make_unique<Badger>();
+
+    m_badgerControlled->initialise (ogre, ogre->GetSceneManager()->getRootSceneNode(), "BadgerControlled");
+    m_badgerPath->initialise (ogre, ogre->GetSceneManager()->getRootSceneNode(), "BadgerPath");
 }
 
 
 void Simulation::reset()
 {
-    if (m_badger)
+    if (m_badgerControlled)
     {
-        m_badger->reset();
+        m_badgerControlled->reset();
         setSpeedRate (0.f);
         setTurnRate (0.f);
     }
@@ -149,7 +154,7 @@ void Simulation::updateInput()
 void Simulation::updateSimulation (const float deltaTime)
 {
     // Update the simulation.
-    m_badger->updateSimulation (deltaTime);
+    m_badgerControlled->updateSimulation (deltaTime);
 }
 
 
@@ -163,7 +168,7 @@ void Simulation::setSpeedRate (const float value)
     if (m_speedRate != previous)
     {
         // Update the wheel and handle bar rotation.
-        m_badger->setSpeedRate (m_speedRate);
+        m_badgerControlled->setSpeedRate (m_speedRate);
     }
 }
 
@@ -178,7 +183,7 @@ void Simulation::setTurnRate (const float value)
     if (m_turnRate != previous)
     {
         // Update the wheel and handle bar rotation.
-        m_badger->setTurnRate (m_turnRate);
+        m_badgerControlled->setTurnRate (m_turnRate);
     }
 }
 
