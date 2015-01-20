@@ -110,7 +110,7 @@ class Badger final : public IActor
         float                               m_brakePower        { 50.f };       //!< How quickly the badger can break.
         
         float                               m_currentSpeed      { 0.f };        //!< Keeps track of how quickly the badger is currently moving.
-        float                               m_maxSpeed          { 60.f };       //!< The vehicle speed in meters per second.
+        float                               m_maxSpeed          { 80.f };       //!< The vehicle speed in meters per second.
         float                               m_targetSpeedRate   { 0.f };        //!< A normalised value between -1.f and 1.f which represents the desired max speed value.
 
 
