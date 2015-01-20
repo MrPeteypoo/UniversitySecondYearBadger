@@ -183,5 +183,6 @@ UpgradeLog*.htm
 FakesAssemblies/
 
 # Extra crap
-OgreTutorialFramework_2014/media/
+Source/OgreTutorialFramework_2014/media/
 Temp/
+OgreSDK_vc12_v1-10/
