@@ -34,8 +34,10 @@ Badger& Badger::operator= (Badger&& move)
 {
     if (this != &move)
     {
+        // IActor.
         m_node = std::move (move.m_node);
         
+        // Badger.
         m_handleBar = std::move (move.m_handleBar);
         m_luggageRack = std::move (move.m_luggageRack);
         m_wheels = std::move (move.m_wheels);
@@ -128,17 +130,12 @@ bool Badger::initialise (OgreApplication* const ogre, Ogre::SceneNode* const roo
             throw std::invalid_argument ("Badger::initialise(), required parameter 'ogre' or 'root' is a nullptr.");
         }    
         
-        // Ensure we allocate all the required memory.
+        // Ensure we allocate all the required memory to speed up intialisation.
 	    m_wheels.resize (4);
-        
-        // Create parameters.        
-        const Ogre::Vector3     position    { 0.f, 4.f, 0.f };
-        const Ogre::Quaternion  orientation {  };
-        const Ogre::Vector3     scale       { 200.f, 200.f, 200.f };
         
         // Load the chasis.
         const auto entity = constructEntity (ogre, "chassis.mesh");
-        m_node.reset (constructNode (root, name, entity, position, orientation, scale));
+        m_node.reset (constructNode (root, name, entity));
 
         // Load the child nodes.
         createChildren (ogre, name);
@@ -169,10 +166,10 @@ void Badger::updateSimulation (const float deltaTime)
     // Ensure we have correct speed values.
     updateSpeed (deltaTime);
 
-    // Calculate the distance to travel. Take the scale of the badger into account.
+    // Calculate the distance to travel. We don't take the badgers scale into account, instead we assume the model and speed values have been scaled correctly.
     const float distance    { m_currentSpeed * deltaTime };
 
-    // Simulate the badgers movement and rotation. Use a fudge-factor of 4 to make the rotation feel a little more natural.
+    // Simulate the badgers movement and rotation.
     moveForward (distance);
     rotate (distance);
 
@@ -192,31 +189,31 @@ void Badger::updateSimulation (const float deltaTime)
 
 void Badger::updateSpeed (const float deltaTime)
 {
-    // Calculate whether we've reached our target.
+    // Calculate whether we've reached our target speed.
     const float currentSpeedRate    { m_currentSpeed / m_maxSpeed };
 
     if (!util::roughlyEquals (currentSpeedRate, m_targetSpeedRate, 0.001f))
     {
-        // The modifier decides if we use negative or positive values.
+        // The modifier decides if we use negative or positive speed increases.
         const float modifier            { m_targetSpeedRate > currentSpeedRate ? 1.f : -1.f };
 
         // Create the a variable ready for calculating the increase in speed.
         float increase = 0.f;
 
-        // Detect if we're supposed to be braking.
+        // Detect if we're supposed to be braking. Only brake if we want to swap between forward and reverse movement and vice versa.
         if ((currentSpeedRate > 0.f && m_targetSpeedRate < 0.f) ||
             (currentSpeedRate < 0.f && m_targetSpeedRate > 0.f))
         {
-            // Instead of duplicating code we'll just use absolute values take advantage of the modifier.
+            // Instead of duplicating code we'll just use absolute values and take advantage of the modifier.
             const float absSpeed        { std::abs (m_currentSpeed) };
 
-            // Calculate whether we've braked too far and therefore should use some acceleration for accurate speed.
+            // Calculate whether we've braked too far and therefore should use a proportion of acceleration for accurate speed.
             const float deltaBrake      { m_brakePower * deltaTime };
             const float brakeDifference { absSpeed - deltaBrake };
 
             if (brakeDifference < 0.f)
             {
-                // Calculate the remainder to use for the acceleration.
+                // Calculate the proportion of acceleration speed to use.
                 const float brakeProportion { std::abs (brakeDifference / m_brakePower) };
                 const float acceleration    { m_acceleration * deltaTime * (1.f - brakeProportion) };
 
@@ -297,22 +294,22 @@ void Badger::createChildren (OgreApplication* const ogre, const Ogre::String& na
     }
 
     
-    // Initialise each object.
+    // Initialise each child object.
     if (!m_handleBar->initialise (ogre, m_node.get(), name + "-HandleBar"))
     {
-        throw std::runtime_error ("Badger::initialise(), the handle bars couldn't be initialised.");
+        throw std::runtime_error ("Badger::createChildren(), the handle bars couldn't be initialised.");
     }
 
     if (!m_luggageRack->initialise (ogre, m_node.get(), name + "-LuggageRack"))
     {
-        throw std::runtime_error ("Badger::initialise(), the luggage rack couldn't be initialised.");
+        throw std::runtime_error ("Badger::createChildren(), the luggage rack couldn't be initialised.");
     }
 
     for (unsigned int i = 0; i < m_wheels.size(); ++i)
     {
         if (!m_wheels[i]->initialise (ogre, m_node.get(), name + "-Wheel-" + std::to_string (i)))
         {
-            throw std::runtime_error ("Badger::initialise(), a wheel couldn't be initialised.");
+            throw std::runtime_error ("Badger::createChildren(), a wheel couldn't be initialised.");
         }
     }
 }
@@ -327,8 +324,8 @@ void Badger::setupWheels()
     m_wheels[3]->setPosition ({ -0.014f, -0.0038f, -0.0254f });     // Back right.
     
     // Calculate the orientation quaternions.
-    const auto  leftOrientation = Ogre::Quaternion (Ogre::Degree (-90.f), Ogre::Vector3::UNIT_Z),
-                rightOrientation = Ogre::Quaternion (Ogre::Degree (90.f), Ogre::Vector3::UNIT_Z);
+    const auto  leftOrientation     = Ogre::Quaternion (Ogre::Degree (-90.f), Ogre::Vector3::UNIT_Z),
+                rightOrientation    = Ogre::Quaternion (Ogre::Degree (90.f), Ogre::Vector3::UNIT_Z);
 
     for (unsigned int i = 0; i < m_wheels.size(); ++i)
     {

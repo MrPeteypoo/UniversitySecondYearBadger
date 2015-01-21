@@ -1,32 +1,32 @@
 #pragma once
 
-#ifndef _OGRE_WORLD_H_
-#define _OGRE_WORLD_H_
+#ifndef _SIMULATION_
+#define _SIMULATION_
 
 
 // STL headers.
-#include <memory>
+#include <vector>
 
 
 // Forward declarations.
-class Badger;
 class OgreApplication;
+class ISimulator;
 
 
 /// <summary>
-/// A management class which manages the simulation required by the ICA.
+/// An encapsulation for the simulation systems in the application.
 /// </summary>
 class Simulation final
 {
     public:
 
-        #pragma region Constructors and destructor
+        #pragma region Constructors and destruction
 
-        Simulation();
+        Simulation() = default;
 
         Simulation (Simulation&& move);
         Simulation& operator= (Simulation&& move);
-
+        
         ~Simulation();
 
         Simulation (const Simulation& copy)             = delete;
@@ -34,63 +34,30 @@ class Simulation final
 
         #pragma endregion
 
-        #pragma region Getters and setters
-        
-        /// <summary> Sets the keyboard to use when checking for input. </summary>
-        void setKeyboard (const std::shared_ptr<OIS::Keyboard>& keyboard);
-        
-        #pragma endregion
-
         #pragma region Public interface
 
-        /// <summary>
-        /// Initialises the scene and every object inside the simulation.
-        /// </summary>
-        /// <param name="ogre"> The OgreApplication which contains the SceneManager needed to create SceneNodes. </param>
-        void initialiseScene (OgreApplication* const ogre);
+        /// <summary> Causes the simulation to initialise. </summary>
+        /// <param name="ogre"> The OgreApplication used for interacting with the Ogre engine. </param>
+        /// <returns> Returns whether the initialisation worked or not. </returns>
+        void initialise (OgreApplication* const ogre);
 
-        /// <summary> Resets the simulation to initial values, completely restarting the simulation. </summary>
+        /// <summary> Forces the simulation to completely reset. </summary>
         void reset();
 
-        /// <summary>
-        /// Updates the entire simulation.
-        /// </summary>
-        /// <param name="deltaTime"> The value in seconds to update the simulation with. </param>
+        /// <summary> Updates the simulation; this should be called each frame. </summary>
+        /// <param name="deltaTime"> The amount of time in seconds passed since the last update. </param>
         void update (const float deltaTime);
 
         #pragma endregion
 
     private:
 
-        #pragma region Simulation management
+        #pragma region Implementation data
 
-        /// <summary> Updates the input to ensure the correct input is being used. </summary>
-        void updateInput();
-
-        /// <summary> Updates the badger so that it can continue on its' path. </summary>
-        void updateSimulation (const float deltaTime);
-        
-        /// <summary> Sets the desired forward speed of the wheels. </summary>
-        /// <param name="value"> The value for the forward speed, this should be clamped between -1.f and 1.f. </param>
-        void setSpeedRate (const float value);
-
-        /// <summary> Sets how much the badger should turn by. </summary>
-        /// <param name="value"> The value for the turn rate, this should be clamped between -1.f and 1.f. </param>
-        void setTurnRate (const float value);
-
-        #pragma endregion
-
-        #pragma region Implmentation data
-        
-        std::unique_ptr<Badger>         m_badgerControlled  { nullptr };    //!< The badger vehicle used to demonstrate the use of keyboard input.
-        std::unique_ptr<Badger>         m_badgerPath        { nullptr };    //!< The badger vehicle used to demonstrate the following of a bezier curve path.
-        std::weak_ptr<OIS::Keyboard>    m_keyboard          {  };           //!< A weak reference to the keyboard when input is required.
-
-        float                           m_speedRate         { 0.f };        //!< A normalised wheel speed for the Badger, from -1.f to 1.f.
-        float                           m_turnRate          { 0.f };        //!< A normalised turn rate for the Badger, from -1.f to 1.f.
+        std::vector<ISimulator*>    m_simulators    { };    //!< A container of each simulator in the application.
 
         #pragma endregion
 
 };
 
-#endif
+#endif // _SIMULATION_

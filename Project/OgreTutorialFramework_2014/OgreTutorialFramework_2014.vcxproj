@@ -100,8 +100,9 @@
     <ClCompile Include="src\Framework\OgreWrapper.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Misc\IActor.cpp" />
+    <ClCompile Include="src\Simulation\BadgerSimulator.cpp" />
+    <ClCompile Include="src\Misc\TimeTracker.cpp" />
     <ClCompile Include="src\Simulation\Simulation.cpp" />
-    <ClCompile Include="src\Simulation\TimeTracker.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -119,7 +120,9 @@
     <ClInclude Include="src\Framework\OgreApplication.h" />
     <ClInclude Include="src\Framework\OgreWrapper.h" />
     <ClInclude Include="src\Misc\IActor.h" />
-    <ClInclude Include="src\Simulation\TimeTracker.h" />
+    <ClInclude Include="src\Simulation\ISimulator.h" />
+    <ClInclude Include="src\Misc\TimeTracker.h" />
+    <ClInclude Include="src\Simulation\BadgerSimulator.h" />
     <ClInclude Include="src\Simulation\Simulation.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\Utility\Maths.h" />

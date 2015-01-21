@@ -31,6 +31,12 @@ float Badger::IRotatableComponent::currentYaw() const
 
 void Badger::IRotatableComponent::rotateComponent (const Ogre::Vector3& axis, const Ogre::Node::TransformSpace space, const float deltaTime)
 {
+    /// Rotation is implemented in this manner so that the component can be rotated in any manner the badger or others decide whilst maintaining the rotation clamp.
+    /// Only one axis is modified at once and this proves to be the most reliable method of ensuring that despite external influences, the angle is always exactly as
+    /// it is calculated to be. An external class changing the orientation of the component will not break this code or send the angle out-of-bounds.
+    ///
+    /// Using a variable which the class keeps track of was considered but ultimately discarded due to the method breaking upon external manipulation.
+
     // Ensure we have a valid yaw value by clamping it.
     const float yaw             { util::fixYaw (m_node->getOrientation().getYaw().valueRadians(), angleLimit + tolerance * 2.f) };
         

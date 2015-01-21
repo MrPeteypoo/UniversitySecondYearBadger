@@ -48,8 +48,13 @@ Badger::HandleBar::~HandleBar()
 
 void Badger::HandleBar::reset()
 {
+    // Reset the node itself.
+    m_node->setPosition ({ 0.f, 0.0182f, 0.01f });
+    m_node->setOrientation ({ Ogre::Degree (-37.784f), Ogre::Vector3::UNIT_X });
+    m_node->setScale ({ 1.f, 1.f, 1.f });
+
+    // Ensure the handle bars won't turn without more input.
     m_targetTurn = 0.f;
-    m_node->yaw (Ogre::Radian (0.f));
 }
 
 #pragma endregion
@@ -66,18 +71,14 @@ bool Badger::HandleBar::initialise (OgreApplication* const ogre, Ogre::SceneNode
         {
             throw std::invalid_argument ("Badger::HandleBar::initialise(), required parameter 'ogre' or 'root' is a nullptr.");
         }
-        
-        // Create parameters.
-        const Ogre::Vector3     position    { 0.f, 0.0182f, 0.01f };
-        const Ogre::Quaternion  orientation { Ogre::Degree (-37.784f), Ogre::Vector3::UNIT_X };
-        const Ogre::Vector3     scale       { 1.f, 1.f, 1.f };
 
         // Initialise the entity.
         const auto entity = constructEntity (ogre, "handlebar.mesh", "blue");
 
         // Construct the node.
-        m_node.reset (constructNode (root, name, entity, position, orientation, scale));
+        m_node.reset (constructNode (root, name, entity));
 
+        // Reset each attribute.
         reset();
         
         // We're done, yay!
@@ -100,6 +101,7 @@ bool Badger::HandleBar::initialise (OgreApplication* const ogre, Ogre::SceneNode
 
 void Badger::HandleBar::updateSimulation (const float deltaTime)
 {
+    // We simply need to rotate the handle bars according to their target turn rate.
     rotateComponent (Ogre::Vector3::UNIT_Y, Ogre::Node::TS_LOCAL, deltaTime);
 }
 

@@ -22,7 +22,7 @@ class Badger::LuggageRack final : public IActor
         LuggageRack (LuggageRack&& move);
         LuggageRack& operator= (LuggageRack&& move);
 
-	    ~LuggageRack();
+	    ~LuggageRack() override final;
 
         LuggageRack (const LuggageRack& copy)             = delete;
         LuggageRack& operator= (const LuggageRack& copy)  = delete;
@@ -31,12 +31,11 @@ class Badger::LuggageRack final : public IActor
         
         #pragma region Actor functionality
                 
-        /// <summary>
-        /// Initialises the LuggageRack, this will load the object at a default position.
-        /// <returns> Returns whether the initialisation was successful. </returns>
-        /// </summary>
+        /// <summary> Initialises the LuggageRack, this will load the object at a default position. </summary>
         /// <param name="ogre"> The OgreApplication used for creating entities. </param>
         /// <param name="root"> The SceneNode to attach the LuggageRack to. </param>
+        /// <param name="name"> The unique name given to the SceneNode upon intialisation. </param>
+        /// <returns> Returns whether the initialisation was successful. </returns>
         bool initialise (OgreApplication* const ogre = nullptr, Ogre::SceneNode* const root = nullptr, const Ogre::String& name = { }) override final;
 
         #pragma endregion

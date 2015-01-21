@@ -25,6 +25,7 @@ Badger::LuggageRack& Badger::LuggageRack::operator= (LuggageRack&& move)
 {
     if (this != &move)
     {
+        // IActor
         m_node = std::move (move.m_node);
     }
 
@@ -62,7 +63,7 @@ bool Badger::LuggageRack::initialise (OgreApplication* const ogre, Ogre::SceneNo
         // Construct the node.
         m_node.reset (constructNode (root, name, entity, position, orientation, scale));
         
-
+        // Simples!
         return true;
     }
 

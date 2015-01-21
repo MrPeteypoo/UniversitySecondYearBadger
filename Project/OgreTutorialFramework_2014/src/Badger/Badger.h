@@ -22,7 +22,7 @@ class Badger final : public IActor
         Badger (Badger&& move);
         Badger& operator= (Badger&& move);
 
-        ~Badger();
+        ~Badger() override final;
 
         Badger (const Badger& copy)             = delete;
         Badger& operator= (const Badger& copy)  = delete;
@@ -34,7 +34,7 @@ class Badger final : public IActor
         /// <summary> Sets the maximum speed the badger can reach. </summary>
         void setMaxSpeed (const float speed)    { m_maxSpeed = speed; }
 
-        /// <summary> Sets the target speed of the Badger. This will be achieved over time. </summary>
+        /// <summary> Sets the target speed rate of the maximum speed. This will be achieved over time. </summary>
         /// <param name="speed"> This will be clamped between -1.f and 1.f. </param>
         void setSpeedRate (const float speed);
 
@@ -53,6 +53,7 @@ class Badger final : public IActor
         /// <returns> Returns whether the initialisation was successful. </returns>
         /// <param name="ogre"> The OgreApplication used for creating entities. </param>
         /// <param name="root"> The SceneNode to attach the Badger to. </param>
+        /// <param name="name"> The unique name to give the badger. </param>
         bool initialise (OgreApplication* const ogre = nullptr, Ogre::SceneNode* const root = nullptr, const Ogre::String& name = { }) override final;
 
         /// <summary> Moves and rotates the badger and each component according to its current state. </summary>

@@ -20,7 +20,7 @@ Ogre::Entity* IActor::constructEntity (OgreApplication* const ogre, const Ogre::
     auto entity = ogre->GetSceneManager()->createEntity (mesh);
     entity->setCastShadows (false);
 
-    // Create the material to be used.
+    // Set the material to be used.
     entity->setMaterialName (material);
     
     return entity;

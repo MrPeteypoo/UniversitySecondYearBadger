@@ -38,18 +38,16 @@ void OgreApplication::RunOgreApplication()
 	shared_ptr<Ogre::MovableObject> temp;
 	temp.reset(cameraNode->getAttachedObject("MainCamera"));
 	std::shared_ptr<Camera> camera = make_shared<Camera>(cameraNode, temp);
-
-	//Create the simulation world
-	auto simulation = make_shared<Simulation>();
-	simulation->initialiseScene(this);
-	
+    	
 	this->CreateIOS();
 	auto keyboard = this->GetKeyboard();
 	auto mouse = this->GetMouse();
 	auto timer = this->CreateTimer();
 	timer->reset();
-
-    simulation->setKeyboard (keyboard);
+    
+	//Create the simulation world
+	auto simulation = make_shared<Simulation>();
+	simulation->initialise (this);
 
 	unsigned long lastTime = timer->getMilliseconds();
 	unsigned long deltaTime = 0;

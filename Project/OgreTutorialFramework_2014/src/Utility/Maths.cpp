@@ -26,8 +26,7 @@ namespace util
         }
 
         // Return the calculated value.
-        //return clamp (result, -limit, limit);
-        return result;
+        return clamp (result, -limit, limit);
     }
 
     #pragma endregion

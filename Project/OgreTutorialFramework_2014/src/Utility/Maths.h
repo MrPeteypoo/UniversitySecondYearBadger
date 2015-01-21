@@ -24,6 +24,7 @@ namespace util
     /// <summary> Ogre is picky, it alternates between 0 and PI for yaw values so this function corrects them to be between -limit and limit. </summary>
     /// <param name="yaw"> The value to fix. </param>
     /// <param name="limit"> The range which the yaw value should be limited to. This value is expected to be positive. </param>
+    /// <returns> The fixed and clamped value. </returns>
     float fixYaw (const float yaw, const float limit);
 
     #pragma endregion
@@ -97,49 +98,38 @@ namespace util
 
     #pragma region Rotation functions
     
-    /// <summary>
-    /// Creates a rotation matrix from the given orientation.
-    /// <returns> Returns a matrix with the given orientation. </returns>
-    /// </summary>
+    /// <summary> Creates a rotation matrix from the given orientation. </summary>
     /// <param name="orientation"> The X, Y and Z angles of the matrix. </param>
+    /// <returns> Returns a matrix with the given orientation. </returns>
 	Ogre::Matrix3 rotationMatrix (const Ogre::Vector3& orientation);
 
 
-    /// <summary>
-    /// Creates a rotation matrix from the given orientation.
-    /// <returns> Returns a matrix with the given orientation. </returns>
-    /// </summary>
+    /// <summary> Creates a rotation matrix from the given orientation. </summary>
     /// <param name="x"> The X angle of the matrix. </param>
     /// <param name="y"> The Y angle of the matrix. </param>
     /// <param name="z"> The Z angle of the matrix. </param>
+    /// <returns> Returns a matrix with the given orientation. </returns>
 	Ogre::Matrix3 rotationMatrix (const float x, const float y, const float z);
 
 
-    /// <summary>
-    /// Creates a rotation matrix for a given angle of the X axis.
-    /// <returns> A rotation matrix. </returns>
-    /// </summary>
+    /// <summary> Creates a rotation matrix for a given angle of the X axis. </summary>
     /// <param name="angle"> The angle which the matrix should represent. </param>
+    /// <returns> A rotation matrix. </returns>
 	Ogre::Matrix3 rotationX (const float angle);
 
 
-    /// <summary>
-    /// Creates a rotation matrix for a given angle of the Y axis.
-    /// <returns> A rotation matrix. </returns>
-    /// </summary>
+    /// <summary> Creates a rotation matrix for a given angle of the Y axis. </summary>
     /// <param name="angle"> The angle which the matrix should represent. </param>
+    /// <returns> A rotation matrix. </returns>
 	Ogre::Matrix3 rotationY (const float angle);
 
 
-    /// <summary>
-    /// Creates a rotation matrix for a given angle of the Z axis.
-    /// <returns> A rotation matrix. </returns>
-    /// </summary>
+    /// <summary> Creates a rotation matrix for a given angle of the Z axis. </summary>
     /// <param name="angle"> The angle which the matrix should represent. </param>
+    /// <returns> A rotation matrix. </returns>
 	Ogre::Matrix3 rotationZ (const float angle);
 
     #pragma endregion
-
 
 }
 
