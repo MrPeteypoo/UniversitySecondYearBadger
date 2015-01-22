@@ -4,6 +4,7 @@
 
 // Engine headers.
 #include <Simulation/BadgerSimulator.h>
+#include <Simulation/PathSimulator.h>
 
 
 
@@ -49,14 +50,17 @@ void Simulation::initialise (OgreApplication* const ogre)
 {
     // Add the simulators.
     m_simulators.push_back (new BadgerSimulator());
-    //m_simulators.push_back (new PathSimulator());
+    m_simulators.push_back (new PathSimulator());
 
     // Initialise each simulator.
     for (auto simulator : m_simulators)
     {
         if (simulator)
         {
-            simulator->initialise (ogre);
+            if (!simulator->initialise (ogre))
+            {
+                throw std::runtime_error ("Simulation::initialise(), unable to initialise an ISimulator.");
+            }
         }
     }
 }

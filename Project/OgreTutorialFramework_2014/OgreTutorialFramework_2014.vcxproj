@@ -108,6 +108,7 @@
     <ClCompile Include="src\Path\Waypoint.cpp" />
     <ClCompile Include="src\Simulation\BadgerSimulator.cpp" />
     <ClCompile Include="src\Misc\TimeTracker.cpp" />
+    <ClCompile Include="src\Simulation\PathSimulator.cpp" />
     <ClCompile Include="src\Simulation\Simulation.cpp" />
     <ClCompile Include="src\ThirdParty\pugixml.cpp" />
     <ClCompile Include="src\Utility\Maths.cpp" />
@@ -128,6 +129,7 @@
     <ClInclude Include="src\Simulation\ISimulator.h" />
     <ClInclude Include="src\Misc\TimeTracker.h" />
     <ClInclude Include="src\Simulation\BadgerSimulator.h" />
+    <ClInclude Include="src\Simulation\PathSimulator.h" />
     <ClInclude Include="src\Simulation\Simulation.h" />
     <ClInclude Include="src\Path\Waypoint.h" />
     <ClInclude Include="src\stdafx.h" />

@@ -32,10 +32,12 @@ class Path final
     private:
 
         // Forward declarations.
-        class Segment;
         class Waypoint;
 
     public:
+
+        // Forward declarations.
+        class Segment;
 
         #pragma region Constructors and destructor
 
@@ -52,6 +54,11 @@ class Path final
         #pragma endregion
 
         #pragma region Getters
+        
+        /// <summary> Gets a bezier curve segment from the given distance value, this is more expensive than by index. </summary>
+        /// <param name="distance"> The distance to check for. If this is larger than the length of the path then the distance will cycle. </param>
+        /// <returns> The segment which the distance resides in. A nullptr if the distance has not been calculated. </returns>
+        const std::shared_ptr<const Segment> segmentByDistance (float distance) const;
 
         /// <summary> Gets a bezier curve segment from a given index value. </summary>
         /// <param name="index"> The segment number. </param>

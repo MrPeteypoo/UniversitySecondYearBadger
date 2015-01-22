@@ -2,6 +2,7 @@
 
 
 // STL headers.
+#include <cmath>
 #include <exception>
 #include <iostream>
 
@@ -15,6 +16,7 @@
 // Engine headers.
 #include <Path/Segment.h>
 #include <Path/Waypoint.h>
+#include <Utility/Maths.h>
 
 
 
@@ -54,6 +56,36 @@ Path::~Path()
 
 
 #pragma region Getters
+
+const std::shared_ptr<const Path::Segment> Path::segmentByDistance (const float distance) const
+{
+    // Pre-condition: We have valid length values.
+    if (m_length <= 0.f)
+    {
+        return nullptr;
+    }
+
+    // Calculate whether we need to scale the distance back or not.
+    const float workingDistance { distance > m_length ? std::fmod (distance, m_length) : distance };
+
+    // Add up the distances until we reach a valid value.
+    float previous  { 0.f };
+
+    for (unsigned int i = 0; i < m_segments.size(); ++i)
+    {
+        const float current { previous + m_segments[i]->getLength() };
+
+        // Return the previous segment if we're in the correct segment.
+        if (previous >= distance && current < distance)
+        {
+            return m_segments[i - 1];
+        }
+
+        previous = current;
+    }
+
+    return nullptr;
+}
 
 const std::shared_ptr<const Path::Segment> Path::getSegment (const unsigned int index) const
 {

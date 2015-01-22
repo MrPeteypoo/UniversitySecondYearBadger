@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Path Name="BezierTest" SamplesPerSegment="200">
+    <Segment>
+        <Point X="0" Y="4" Z="0" />
+        <Point X="9" Y="4" Z="20" />
+        <Point X="11" Y="4" Z="20" />
+        <Point X="20" Y="4" Z="0" />
+    </Segment>
+</Path>
