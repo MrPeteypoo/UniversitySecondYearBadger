@@ -17,15 +17,15 @@ class Badger::Wheel final : public Badger::IRotatableComponent
         
         #pragma region Constructors and destructor
 
-	    Wheel();
+	    Wheel()                                 = default;
 
         Wheel (Wheel&& move);
         Wheel& operator= (Wheel&& move);
 
 	    ~Wheel() override final;
 
-        Wheel (const Wheel& copy)             = delete;
-        Wheel& operator= (const Wheel& copy)  = delete;
+        Wheel (const Wheel& copy)               = delete;
+        Wheel& operator= (const Wheel& copy)    = delete;
 
         #pragma endregion
 

@@ -10,11 +10,6 @@
 
 #pragma region Constructors and destructor
 
-Badger::LuggageRack::LuggageRack()
-{
-}
-
-
 Badger::LuggageRack::LuggageRack (LuggageRack&& move)
 {
     *this = std::move (move);

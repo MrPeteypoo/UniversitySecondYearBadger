@@ -124,6 +124,7 @@
     <ClInclude Include="src\Misc\TimeTracker.h" />
     <ClInclude Include="src\Simulation\BadgerSimulator.h" />
     <ClInclude Include="src\Simulation\Simulation.h" />
+    <ClInclude Include="src\Path\Waypoint.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\Utility\Maths.h" />
     <ClInclude Include="src\Utility\Ogre.h" />

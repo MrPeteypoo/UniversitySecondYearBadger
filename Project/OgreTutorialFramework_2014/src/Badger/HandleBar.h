@@ -17,15 +17,15 @@ class Badger::HandleBar final : public Badger::IRotatableComponent
         
         #pragma region Constructors and destructor
 
-	    HandleBar();
+	    HandleBar()                                     = default;
 
         HandleBar (HandleBar&& move);
         HandleBar& operator= (HandleBar&& move);
 
 	    ~HandleBar() override final;
 
-        HandleBar (const HandleBar& copy)             = delete;
-        HandleBar& operator= (const HandleBar& copy)  = delete;
+        HandleBar (const HandleBar& copy)               = delete;
+        HandleBar& operator= (const HandleBar& copy)    = delete;
 
         #pragma endregion
 

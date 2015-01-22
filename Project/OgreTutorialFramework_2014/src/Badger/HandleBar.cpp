@@ -10,10 +10,6 @@
 
 #pragma region Constructors and destructor
 
-Badger::HandleBar::HandleBar()
-{
-}
-
 
 Badger::HandleBar::HandleBar (HandleBar&& move)
 {

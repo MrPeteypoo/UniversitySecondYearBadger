@@ -113,5 +113,8 @@
     <ClInclude Include="src\Simulation\Simulation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Path\Waypoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

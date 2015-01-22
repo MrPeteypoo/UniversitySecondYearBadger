@@ -10,11 +10,6 @@
 
 #pragma region Constructors and destructor
 
-Badger::Wheel::Wheel()
-{
-}
-
-
 Badger::Wheel::Wheel (Wheel&& move)
 {
     *this = std::move (move);

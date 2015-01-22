@@ -17,15 +17,15 @@ class Badger::LuggageRack final : public IActor
         
         #pragma region Constructors and destructor
 
-	    LuggageRack();
+	    LuggageRack()                                       = default;
 
         LuggageRack (LuggageRack&& move);
         LuggageRack& operator= (LuggageRack&& move);
 
 	    ~LuggageRack() override final;
 
-        LuggageRack (const LuggageRack& copy)             = delete;
-        LuggageRack& operator= (const LuggageRack& copy)  = delete;
+        LuggageRack (const LuggageRack& copy)               = delete;
+        LuggageRack& operator= (const LuggageRack& copy)    = delete;
 
         #pragma endregion
         
