@@ -103,6 +103,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Misc\IActor.cpp" />
+    <ClCompile Include="src\Path\Segment.cpp" />
     <ClCompile Include="src\Path\Waypoint.cpp" />
     <ClCompile Include="src\Simulation\BadgerSimulator.cpp" />
     <ClCompile Include="src\Misc\TimeTracker.cpp" />

@@ -39,7 +39,7 @@ class Path::Segment final
 
         #pragma region Getters and setters
 
-        /// <summary> Gets the desired point. </summary>
+        /// <summary> Gets the desired point. Out of range will return the final point of the curve. </summary>
         const Ogre::Vector3& getPoint (const unsigned int index) const;
 
         /// <summary> Gets the most recently calculated arc length for the curve. </summary>
@@ -63,12 +63,31 @@ class Path::Segment final
         /// <summary> Calculates a point of the bezier curve according to the delta given. </summary>
         /// <param name="delta"> The delta value between 0.f and 1.f for the curve point. </param>
         /// <param name="derivative"> Which derivative to calculate, none will be the curve point itself, first is a tangent vector and second is a curviture vector. </param>
-        /// <returns> The calculated curve point according to the given derivative. </returns>
-        Ogre::Vector3 curvePoint (const float delta, const Derivative derivative) const;
+        /// <returns> The calculated curve point according to the given derivative. Unsupported derivatives return the curve point. </returns>
+        Ogre::Vector3 curvePoint (const float delta, const Derivative derivative = Derivative::None) const;
 
         #pragma endregion
 
     private:
+
+        #pragma region Curve calculation
+
+        /// <summary> Calculates the curve point based on a delta value. </summary>
+        /// <param name="delta"> The 0.f to 1.f value representing a point on the curve. </param>
+        /// <returns> The calculated vector. </returns>
+        Ogre::Vector3 curvePosition (const float delta) const;
+
+        /// <summary> Calculates the tangent vector of a given point (first derivative). </summary>
+        /// <param name="delta"> The 0.f to 1.f value representing a point on the curve. </param>
+        /// <returns> The calculated tangent vector. </returns>
+        Ogre::Vector3 curveTangent (const float delta) const;
+
+        /// <summary> Calculates the curvature vector of a given point (second derivative). </summary>
+        /// <param name="delta"> The 0.f to 1.f value representing a point on the curve. </param>
+        /// <returns> The calculated curvature vector. </returns>
+        Ogre::Vector3 curveCurvature (const float delta) const;
+
+        #pragma endregion
 
         #pragma region Implementation data
 

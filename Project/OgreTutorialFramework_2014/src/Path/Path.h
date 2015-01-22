@@ -82,7 +82,7 @@ class Path final
         /// <param name="delta"> The delta value between 0.f and 1.f for the curve point on the chosen segment. </param>
         /// <param name="derivative"> Which derivative to calculate, none will be the curve point itself, first is a tangent vector and second is a curviture vector. </param>
         /// <returns> The calculated curve point according to the given derivative. 0, 0, 0 if index is invalid. </returns>
-        Ogre::Vector3 curvePoint (const unsigned int index, const float delta, const Derivative derivative) const;
+        Ogre::Vector3 curvePoint (const unsigned int index, const float delta, const Derivative derivative = Derivative::None) const;
 
         #pragma endregion
 
