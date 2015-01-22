@@ -1,9 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Path Name="BezierTest" SamplesPerSegment="200">
-    <Segment>
-        <Point X="0" Y="4" Z="0" />
-        <Point X="9" Y="4" Z="20" />
-        <Point X="11" Y="4" Z="20" />
-        <Point X="20" Y="4" Z="0" />
+    <!--<Segment>
+        <Point X="-50" Y="4" Z="-50" />
+        <Point X="-5" Y="4" Z="50" />
+        <Point X="5" Y="4" Z="50" />
+        <Point X="50" Y="4" Z="-50" />
     </Segment>
+    <Segment>
+        <Point X="50" Y="4" Z="-50" />
+        <Point X="95" Y="4" Z="-100" />
+        <Point X="135" Y="4" Z="-150" />
+        <Point X="150" Y="4" Z="-50" />
+    </Segment>-->
+	
+	<Segment>
+		<Point X="-200" Y="4" Z="-200" />
+		<Point X="200" Y="4" Z="-200" />
+		<Point X="-200" Y="4" Z="200" />
+		<Point X="200" Y="4" Z="200" />
+	</Segment>
+	
+	<Segment>
+		<Point X="200" Y="4" Z="200" />
+		<Point X="400" Y="4" Z="200" />
+		<Point X="-400" Y="4" Z="400" />
+		<Point X="400" Y="4" Z="400" />	
+	</Segment>
 </Path>
