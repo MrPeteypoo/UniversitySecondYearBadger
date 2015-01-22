@@ -121,6 +121,7 @@
     <ClInclude Include="src\Framework\OgreWrapper.h" />
     <ClInclude Include="src\Misc\IActor.h" />
     <ClInclude Include="src\Path\Path.h" />
+    <ClInclude Include="src\Path\Segment.h" />
     <ClInclude Include="src\Simulation\ISimulator.h" />
     <ClInclude Include="src\Misc\TimeTracker.h" />
     <ClInclude Include="src\Simulation\BadgerSimulator.h" />

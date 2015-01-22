@@ -119,5 +119,8 @@
     <ClInclude Include="src\Path\Path.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Path\Segment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

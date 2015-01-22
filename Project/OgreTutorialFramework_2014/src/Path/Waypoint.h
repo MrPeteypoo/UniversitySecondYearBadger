@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef _WAYPOINT_
-#define _WAYPOINT_
+#ifndef _PATH_WAYPOINT_
+#define _PATH_WAYPOINT_
 
 
 // Engine headers.
@@ -43,4 +43,4 @@ class Path::Waypoint final : public IActor
 
 };
 
-#endif // _WAYPOINT_
+#endif // _PATH_WAYPOINT_
