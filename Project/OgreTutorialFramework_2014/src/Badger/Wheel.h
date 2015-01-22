@@ -50,7 +50,7 @@ class Badger::Wheel final : public Badger::IRotatableComponent
         /// <summary> Initialises the Wheel, this will load the object at a default position. </summary>
         /// <param name="ogre"> The OgreApplication used for creating entities. </param>
         /// <param name="root"> The SceneNode to attach the Wheel to. </param>
-        /// <param name="name"> The unique name for the HandleBar scene node. </param>
+        /// <param name="name"> The unique name for the scene node. </param>
         /// <returns> Returns whether the initialisation was successful. </returns>
         bool initialise (OgreApplication* const ogre = nullptr, Ogre::SceneNode* const root = nullptr, const Ogre::String& name = { }) override final;
 

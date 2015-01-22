@@ -62,7 +62,7 @@ bool Badger::LuggageRack::initialise (OgreApplication* const ogre, Ogre::SceneNo
         return true;
     }
 
-    catch (std::exception& error)
+    catch (const std::exception& error)
     {
         std::cerr << "An exception was caught in Badger::LuggageRack::initialise(): " << error.what() << std::endl;
     }
