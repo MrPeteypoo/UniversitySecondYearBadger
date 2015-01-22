@@ -77,17 +77,26 @@ const std::shared_ptr<const Path::Segment> Path::getSegment (const unsigned int 
 
 bool Path::loadFromXML (const std::string& fileLocation, OgreApplication* const ogre, Ogre::SceneNode* const root)
 {
-    // We'll use pugixml for loading via xml, the structure should be Path -> Segment -> Point. Segments are not limited but each segment
-    // must have four points.
+    // We'll use pugixml for loading via xml, the structure should be Path (Name, SamplersPerSegment) -> Segment -> Point (X, Y, Z). 
+    // Segments are not limited but each segment must have four points.
     try
     {
+        // Pre-condition: We have valid pointers.
+        if (!ogre || !root)
+        {
+            throw std::invalid_argument ("Path::loadFromXML(), required parameter is a nullptr.");
+        }
+
         // Clear our current data.
         m_segments.clear();
         m_waypoints.clear();
 
         // Create and load the xml document.
         pugi::xml_document xml  {  };
-        xml.load_file (fileLocation.c_str());
+        if (!xml.load_file (fileLocation.c_str()))
+        {
+            throw std::invalid_argument ("Path::loadFromXML(), \"" + fileLocation + "\" is not a valid XML document.");
+        }
 
         // Attempt to parse through the document. Start by obtaining the sample amount.
         const auto pathNode             = xml.child ("Path");
@@ -107,7 +116,7 @@ bool Path::loadFromXML (const std::string& fileLocation, OgreApplication* const 
             size_t pointCount   { 0 };
 
             // Initialise each point.
-            for (const auto pointNode : segmentNode.children("Point"))
+            for (const auto pointNode : segmentNode.children ("Point"))
             {
                 // Ensure we don't add more than four points.
                 if (pointCount == 4)
