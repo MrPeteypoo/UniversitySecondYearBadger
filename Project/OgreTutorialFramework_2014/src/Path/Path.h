@@ -66,11 +66,19 @@ class Path final
         const std::shared_ptr<const Segment> getSegment (const unsigned int index) const;
 
         /// <summary> Gets the current number of segments that exist. </summary>
-        size_t getSegmentCount() const  { return m_segments.size(); }
+        size_t getSegmentCount() const                  { return m_segments.size(); }
+
+        /// <summary> Gets the scale applied to waypoints.
+        const Ogre::Vector3& getWaypointScale() const   { return m_waypointScale; }
 
         /// <summary> Gets the most recently calculated arc length for the path. </summary>
         /// <returns> The total arc length of the path, -1.f if the path has not been initialised. </returns>
-        float getLength() const         { return m_length; }
+        float getLength() const                         { return m_length; }
+
+        /// <summary> Sets the scale which is applied to waypoints. This can also be used to update the current waypoints. </summary>
+        /// <param name="scale"> The scale to apply to waypoints. </param>
+        /// <param name="updateCurrent"> Indicates whether the function should update the scale of currently created waypoints. </param>
+        void setWaypointScale (const Ogre::Vector3& scale, const bool updateCurrent = false);
 
         #pragma endregion
 
@@ -121,10 +129,12 @@ class Path final
 
         #pragma region Implementation data
 
-        std::vector<std::shared_ptr<Segment>>   m_segments  {  };           //!< A vector of segments, used to represent an entire bezier curve segment of the total path.
-        std::vector<std::unique_ptr<Waypoint>>  m_waypoints {  };           //!< A vector of waypoints used to visually represent the track.
+        std::vector<std::shared_ptr<Segment>>   m_segments      {  };               //!< A vector of segments, used to represent an entire bezier curve segment of the total path.
+        std::vector<std::unique_ptr<Waypoint>>  m_waypoints     {  };               //!< A vector of waypoints used to visually represent the track.
+
+        Ogre::Vector3                           m_waypointScale { 1.f, 1.f, 1.f };  //!< The scale vector used for waypoints. This should be controlled externally.
         
-        float                                   m_length    { -1.f };       //!< The total calculated length of the path.
+        float                                   m_length        { -1.f };           //!< The total calculated length of the path.
 
         #pragma endregion
 

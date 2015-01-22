@@ -55,7 +55,7 @@ Path::~Path()
 #pragma endregion
 
 
-#pragma region Getters
+#pragma region Getters and setters
 
 const std::shared_ptr<const Path::Segment> Path::segmentByDistance (const float distance) const
 {
@@ -84,7 +84,7 @@ const std::shared_ptr<const Path::Segment> Path::segmentByDistance (const float 
         previous = current;
     }
 
-    return nullptr;
+    return m_segments.front();
 }
 
 const std::shared_ptr<const Path::Segment> Path::getSegment (const unsigned int index) const
@@ -99,6 +99,25 @@ const std::shared_ptr<const Path::Segment> Path::getSegment (const unsigned int 
     catch (...)
     {
         return nullptr;
+    }
+}
+
+
+void Path::setWaypointScale (const Ogre::Vector3& scale, const bool updateCurrent)
+{
+    // Change the scale.
+    m_waypointScale = scale;
+
+    // Update the stored waypoints if desired.
+    if (updateCurrent)
+    {
+        for (const auto& waypoint : m_waypoints)
+        {
+            if (waypoint)
+            {
+                waypoint->setScale (m_waypointScale);
+            }
+        }
     }
 }
 
@@ -271,6 +290,7 @@ void Path::createWaypoint (OgreApplication* const ogre, Ogre::SceneNode* const r
 
     // Move the waypoint to the correct position.
     waypoint->setPosition (position);
+    waypoint->setScale (m_waypointScale);
 
     // Add it to the vector.
     m_waypoints.push_back (std::move (waypoint));
