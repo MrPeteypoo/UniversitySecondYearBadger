@@ -103,11 +103,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Misc\IActor.cpp" />
+    <ClCompile Include="src\Path\Path.cpp" />
     <ClCompile Include="src\Path\Segment.cpp" />
     <ClCompile Include="src\Path\Waypoint.cpp" />
     <ClCompile Include="src\Simulation\BadgerSimulator.cpp" />
     <ClCompile Include="src\Misc\TimeTracker.cpp" />
     <ClCompile Include="src\Simulation\Simulation.cpp" />
+    <ClCompile Include="src\ThirdParty\pugixml.cpp" />
     <ClCompile Include="src\Utility\Maths.cpp" />
     <ClCompile Include="src\Utility\Ogre.cpp" />
   </ItemGroup>
@@ -129,6 +131,8 @@
     <ClInclude Include="src\Simulation\Simulation.h" />
     <ClInclude Include="src\Path\Waypoint.h" />
     <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\ThirdParty\pugiconfig.hpp" />
+    <ClInclude Include="src\ThirdParty\pugixml.hpp" />
     <ClInclude Include="src\Utility\Maths.h" />
     <ClInclude Include="src\Utility\Ogre.h" />
   </ItemGroup>

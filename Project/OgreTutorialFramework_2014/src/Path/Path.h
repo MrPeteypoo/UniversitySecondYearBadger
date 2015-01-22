@@ -8,6 +8,11 @@
 #include <memory>
 
 
+// Forward declarations
+namespace pugi { class xml_node; }
+class OgreApplication;
+
+
 /// <summary>
 /// An enumeration to represent which derivative is desired from a curve point on the path.
 /// </summary>
@@ -51,14 +56,14 @@ class Path final
         /// <summary> Gets a bezier curve segment from a given index value. </summary>
         /// <param name="index"> The segment number. </param>
         /// <returns> The desired segment, if an invalid index is given a nullptr is returned. </returns>
-        const Segment* const getSegment (const unsigned int index) const;
+        const std::shared_ptr<const Segment> getSegment (const unsigned int index) const;
 
         /// <summary> Gets the current number of segments that exist. </summary>
         size_t getSegmentCount() const  { return m_segments.size(); }
 
         /// <summary> Gets the most recently calculated arc length for the path. </summary>
         /// <returns> The total arc length of the path, -1.f if the path has not been initialised. </returns>
-        float getLength() const;
+        float getLength() const         { return m_length; }
 
         #pragma endregion
 
@@ -66,7 +71,9 @@ class Path final
 
         /// <summary> Loads the entire path from an XML file. Throws exceptions if an error occurs. </summary>
         /// <param name="fileLocation"> The location of the .xml file to load. </param>
-        void loadFromXML (const std::string& fileLocation);
+        /// <param name="ogre"> The application used
+        /// <returns> Whether the loading was successful or not. </returns>
+        bool loadFromXML (const std::string& fileLocation, OgreApplication* const ogre, Ogre::SceneNode* const root);
 
         #pragma endregion
 
@@ -88,12 +95,29 @@ class Path final
 
     private:
 
+        #pragma region Helper functions
+
+        /// <summary> Parses through an XML node attempting to construct a point for a given segment. </summary>
+        /// <param name="segment"> The segment to add the generated point to. </param>
+        /// <param name="pointNode"> The node to parse. </param>
+        /// <param name="pointNumber"> The index to use when adding it to the segment. </param>
+        void addPointFromXML (Segment& segment, const pugi::xml_node& pointNode, const size_t pointIndex);
+        
+        /// <summary> Creates a waypoint in the scene at the given position </summary>
+        /// <param name="ogre"> Used to initialse the waypoint entity. </param>
+        /// <param name="root"> The node to attach the waypoint to. </param>
+        /// <param name="name"> The unique name to call the waypoing. </param>
+        /// <param name="position"> Where to place the waypoint. </param>
+        void createWaypoint (OgreApplication* const ogre, Ogre::SceneNode* const root, const std::string& name, const Ogre::Vector3& position);
+
+        #pragma endregion
+
         #pragma region Implementation data
 
-        std::vector<std::unique_ptr<Segment>>   m_segments  {  };       //!< A vector of segments, used to represent an entire bezier curve segment of the total path.
-        std::vector<std::unique_ptr<Waypoint>>  m_waypoints {  };       //!< A vector of waypoints used to visually represent the track.
+        std::vector<std::shared_ptr<Segment>>   m_segments  {  };           //!< A vector of segments, used to represent an entire bezier curve segment of the total path.
+        std::vector<std::unique_ptr<Waypoint>>  m_waypoints {  };           //!< A vector of waypoints used to visually represent the track.
         
-        float                                   m_length    { -1.f };   //!< The total calculated length of the path.
+        float                                   m_length    { -1.f };       //!< The total calculated length of the path.
 
         #pragma endregion
 
