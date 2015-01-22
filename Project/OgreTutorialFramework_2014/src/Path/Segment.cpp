@@ -131,7 +131,7 @@ Ogre::Vector3 Path::Segment::curvePoint (const float delta, const Derivative der
             return curveCurvature (clampedDelta);
 
         default:
-            return curvePosition (delta);
+            return curvePosition (clampedDelta);
     }
 }
 
