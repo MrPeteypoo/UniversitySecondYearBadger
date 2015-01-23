@@ -105,10 +105,8 @@ bool PathSimulator::initialise (OgreApplication* const ogre)
         const auto root = ogre->GetSceneManager()->getRootSceneNode();
 
         // Initialise each required object.
-        loadBadger (ogre, root);
         loadPath (ogre, root);
-
-        std::cout << "Path length: " << std::to_string (m_path->getLength()) << std::endl;
+        loadBadger (ogre, root);
 
         // Reset ourself.
         reset();
@@ -194,7 +192,9 @@ void PathSimulator::update (const float deltaTime)
     if (m_time >= 1.f)
     {
         // The first segment will when the application starts will be longer than normal because loading times effect deltaTime.
-        std::cout << "Segment length: " << std::to_string (m_segment->getLength()) << " completed in " << std::to_string (m_timeForSegment) << " seconds."<< std::endl;
+        std::cout << "Path: " << std::to_string (m_path->getLength())
+                  << ", segment: " << std::to_string (m_segment->getLength()) 
+                  << ", completed: " << std::to_string (m_timeForSegment) << " seconds."<< std::endl;
 
         // Reset the time counter and obtain the next segment.
         obtainSegment (++m_segmentIndex);

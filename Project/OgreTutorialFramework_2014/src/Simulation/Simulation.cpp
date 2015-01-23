@@ -53,6 +53,12 @@ Simulation::~Simulation()
 
 void Simulation::initialise (OgreApplication* const ogre)
 {
+    // Clear the console so we can see our own messages.
+    for (unsigned int i = 0; i < 25; ++i)
+    {
+        std::cout << std::endl;
+    }
+
     // Add the simulators.
     m_simulators.push_back (new BadgerSimulator());
     m_simulators.push_back (new PathSimulator());
