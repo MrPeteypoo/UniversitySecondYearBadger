@@ -135,6 +135,40 @@ Ogre::Vector3 Path::Segment::curvePoint (const float delta, const Derivative der
     }
 }
 
+
+void Path::Segment::translate (const Ogre::Vector3& translation)
+{
+    // Iterate through each point translating them.
+    for (auto& point : m_points)
+    {
+        point += translation;
+    }
+}
+
+
+void Path::Segment::translatePoint (const unsigned int point, const Ogre::Vector3& translation)
+{
+    try
+    {
+        m_points.at (point) += translation;
+    }
+
+    // Silently ignore all errors.
+    catch (...)
+    {
+    }
+}
+
+
+void Path::Segment::rotate (const Ogre::Matrix3& rotation)
+{
+    // Iterate through each point rotating them.
+    for (auto& point : m_points)
+    {
+        point = point * rotation;
+    }
+}
+
 #pragma endregion
 
 

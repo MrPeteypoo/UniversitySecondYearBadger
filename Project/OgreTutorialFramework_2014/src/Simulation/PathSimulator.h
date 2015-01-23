@@ -81,16 +81,6 @@ class PathSimulator final : public ISimulator
         /// <summary> Obtains a segment at the specified index </summary>
         void obtainSegment (const size_t segment);
 
-        /// <summary> Updates the distance values to be accurate for this frame. </summary>
-        /// <param name="deltaTime"> The value in seconds since the last update. </param>
-        void updateDistance (const float deltaTime);
-
-        /// <summary> Ensures we have the correct segment to update the badger with. </summary>
-        void updateSegment();
-
-        /// <summary> Moves and rotates the badger to the correct point on the current segment. </summary>
-        void updateBadger();
-
         #pragma endregion
 
         #pragma region Implmentation data
@@ -100,10 +90,11 @@ class PathSimulator final : public ISimulator
 
         std::shared_ptr<const Path::Segment>    m_segment           { nullptr };    //!< The current segment. Allows for quicker curve calculations.
 
-        float                                   m_distanceTravelled { 0.f };        //!< The total distance travelled along the path.
-        float                                   m_segmentStart      { 0.f };        //!< The distance value when the segment was started.
-        float                                   m_segmentEnd        { 0.f };        //!< The distance value when the segment will end.
+        Ogre::Vector3                           m_previousTangent   {  };           //!< The tangent of the previous curve point, avoids calculating it again.
+
         unsigned int                            m_segmentIndex      { 0 };          //!< The current index of the current segment.
+        float                                   m_time              { 0.f };        //!< The current time value used to track where on the curve we should be.
+        float                                   m_timeForSegment    { 0.f };
 
         #pragma endregion
 

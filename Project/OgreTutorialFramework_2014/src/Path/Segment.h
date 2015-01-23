@@ -66,6 +66,18 @@ class Path::Segment final
         /// <returns> The calculated curve point according to the given derivative. Unsupported derivatives return the curve point. </returns>
         Ogre::Vector3 curvePoint (const float delta, const Derivative derivative = Derivative::None) const;
 
+        /// <summary> Translates every point in the segment by the vector specified. </summary>
+        /// <param name="translation"> How much to translate the segment by. </param>
+        void translate (const Ogre::Vector3& translation);
+
+        /// <summary> Translates a single point by the vector specified. </summary>
+        /// <param name="translation"> How much to translate the point by. </param>
+        void translatePoint (const unsigned int point, const Ogre::Vector3& translation);
+
+        /// <summary> Rotates the entire curve. </summary>
+        /// <param name="rotation"> The rotation matrix to use to rotate the curve. </param>
+        void rotate (const Ogre::Matrix3& rotation);
+
         #pragma endregion
 
     private:

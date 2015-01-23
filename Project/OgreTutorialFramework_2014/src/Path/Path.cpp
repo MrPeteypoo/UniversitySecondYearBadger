@@ -153,6 +153,7 @@ bool Path::loadFromXML (const std::string& fileLocation, OgreApplication* const 
         const auto pathNode             = xml.child ("Path");
         const auto pathName             = std::string (pathNode.attribute ("Name").as_string());
         const auto samplesPerSegment    = pathNode.attribute ("SamplesPerSegment").as_uint();
+        const auto forceContinuity      = pathNode.attribute ("ForceContinuity").as_bool();
 
         // Keep track of the number of segments.
         size_t segmentCount             { 0 };
@@ -176,10 +177,7 @@ bool Path::loadFromXML (const std::string& fileLocation, OgreApplication* const 
                 }
 
                 // Create the point and add the waypoint.
-                addPointFromXML (*segment, pointNode, pointCount);
-                createWaypoint (ogre, root, 
-                                pathName + "-Waypoint-" + std::to_string (segmentCount) + "-" + std::to_string (pointCount), 
-                                segment->getPoint (pointCount++));
+                addPointFromXML (*segment, pointNode, pointCount++);
             }
 
             if (pointCount != 4)
@@ -188,12 +186,20 @@ bool Path::loadFromXML (const std::string& fileLocation, OgreApplication* const 
             }
 
             // Move the segment into our vector. Unfortunately we can't guess how big the vector should be.
-            m_segments.push_back (std::move (segment));
-            ++segmentCount;
+            m_segments.push_back (segment);
         }
 
         // Now we can calculate the length of the path!
         calculateLength (samplesPerSegment);
+        
+        // Check if we should stitch the curves together.
+        if (forceContinuity)
+        {
+            enforceContinuity();
+        }
+
+        // Construct the way points.
+        constructWaypoints (ogre, root, pathName + "-Waypoint-");
 
         // And we're done with this lengthy process!
         return true;
@@ -225,6 +231,9 @@ bool Path::loadFromXML (const std::string& fileLocation, OgreApplication* const 
 
 float Path::calculateLength (const unsigned int samplesPerSegment)
 {
+    // Pre-condition: Ensure we have a valid sample count.
+    const auto samples  = samplesPerSegment == 0 ? 100 : samplesPerSegment;
+
     // Start by creating our accumulator. Check whether we actually have any segments to calculate. -1.f represents an "uninitialised" state.
     float accumulator   { m_segments.size() == 0 ? -1.f : 0.f };
 
@@ -232,7 +241,7 @@ float Path::calculateLength (const unsigned int samplesPerSegment)
     for (auto& segment : m_segments)
     {
         // We should store the value and check if it is valid.
-        const float segmentLength   { segment->calculateLength (samplesPerSegment) };
+        const float segmentLength   { segment->calculateLength (samples) };
 
         if (segmentLength <= 0.f)
         {
@@ -282,18 +291,107 @@ void Path::addPointFromXML (Segment& segment, const pugi::xml_node& pointNode, c
 }
 
 
-void Path::createWaypoint (OgreApplication* const ogre, Ogre::SceneNode* const root, const std::string& name, const Ogre::Vector3& position)
+void Path::constructWaypoints (OgreApplication* const ogre, Ogre::SceneNode* const root, const std::string& name)
 {
-    // Initialise the waypoint in the scene.
-    auto waypoint = std::make_unique<Waypoint>();
+    // Loop through the entire data structure making waypoints.
+    const unsigned int controlPoints = 4;
+    const unsigned int curvePoints = 200 / m_segments.size();
+
+    // Get the vector ready.
+    m_waypoints.clear();
+    m_waypoints.resize (controlPoints * m_segments.size() + curvePoints * m_segments.size());
+
+    for (unsigned int y = 0; y < m_segments.size(); ++y)
+    {
+        // Cache the segment.
+        auto& segment = m_segments[y];
+
+        // Create each control point.
+        for (unsigned int x = 0; x < controlPoints; ++x)
+        {
+            // We need a unique name.
+            const auto waypointName = name + "Control-" + std::to_string (y) + "-" + std::to_string (x);
+
+            // Add it to the vector.
+            m_waypoints.push_back ( std::unique_ptr<Waypoint> (createWaypoint (ogre, root, waypointName, segment->getPoint (x))));
+        }
+
+        // Create each curve point.
+        for (unsigned int x = 0; x <= curvePoints; ++x)
+        {
+            // We need a unique name.
+            const auto waypointName = name + "Curve-" + std::to_string (y) + "-" + std::to_string (x);
+
+            // The point on the bezier curve.
+            const float curve       = x / static_cast<float> (curvePoints);
+
+            // Add it to the vector.
+            m_waypoints.push_back ( std::unique_ptr<Waypoint> (createWaypoint (ogre, root, waypointName, segment->curvePoint (curve))));
+        }
+    }
+}
+
+
+Path::Waypoint* Path::createWaypoint (OgreApplication* const ogre, Ogre::SceneNode* const root, const std::string& name, const Ogre::Vector3& position)
+{
+    // Create the waypoint.
+    auto waypoint = new Waypoint();
     waypoint->initialise (ogre, root, name);
 
     // Move the waypoint to the correct position.
     waypoint->setPosition (position);
     waypoint->setScale (m_waypointScale);
 
-    // Add it to the vector.
-    m_waypoints.push_back (std::move (waypoint));
+    return waypoint;
+}
+
+
+void Path::enforceContinuity()
+{
+    // Initialise the two pointer variables we will be using.
+    std::shared_ptr<Segment>    previous    { m_segments.front() }, 
+                                current     { nullptr };
+
+    // Start at the second segment since that is where the stitching first occurs.
+    for (unsigned int i = 1; i < m_segments.size(); ++i)
+    {
+        // Update the current value.
+        current = m_segments[i];
+
+        // We need to calculate the angle between the directions A3-A2 and B1-B0.
+        const auto perpendicular    = (previous->getPoint (3) - previous->getPoint (2)).normalisedCopy();
+        const auto collinearGoal    = (current->getPoint (1) - current->getPoint (0)).normalisedCopy();
+
+        // Calculate the angle between the points we need to make collinear.
+        const auto angle            = perpendicular.angleBetween (collinearGoal).valueDegrees();
+        
+        std::cout << std::to_string (Ogre::Degree (angle).valueRadians()) << std::endl;
+
+        // Rotate each point.
+        const auto rotation = util::rotationY (std::abs (angle));
+        current->rotate (rotation);        
+        
+
+        // We must make sure that A3 and B0 match by translating the entire curve.
+        const auto matchPoints = previous->getPoint (3) - current->getPoint (0);
+        current->translate (matchPoints);
+
+        // Now we need to ensure that we have tangential continuity.
+        const auto direction        = (previous->getPoint(3) - previous->getPoint (2));
+        const auto lengthCorrection = direction.length();
+
+        // Translate B1-B3 to B0.
+        current->translate (current->getPoint(0) - current->getPoint (1));
+
+        // Ensure B1 has an equal distance from B0 and A2.
+        current->translate (direction);
+
+        // Correct B0.
+        current->translatePoint (0, previous->getPoint (3) - current->getPoint (0));
+
+        // Don't forget to loop through each segment! I actually forgot, silly sausage.
+        previous = current;
+    }
 }
 
 #pragma endregion

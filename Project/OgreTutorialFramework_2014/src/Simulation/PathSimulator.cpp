@@ -39,9 +39,11 @@ PathSimulator& PathSimulator::operator= (PathSimulator&& move)
 
         m_segment = std::move (move.m_segment);
 
-        m_distanceTravelled = std::move (move.m_distanceTravelled);
-        m_segmentStart = std::move (move.m_segmentStart);
-        m_segmentEnd = std::move (move.m_segmentEnd);
+        m_previousTangent = std::move (move.m_previousTangent);
+
+        m_segmentIndex = std::move (move.m_segmentIndex);
+        m_time = std::move (move.m_time);
+        m_timeForSegment = std::move (move.m_timeForSegment);
     }
 
     return *this;
@@ -79,8 +81,10 @@ bool PathSimulator::initialise (OgreApplication* const ogre)
         loadBadger (ogre, root);
         loadPath (ogre, root);
 
-        // Obtain our first segment.
-        obtainSegment (0);
+        std::cout << "Path length: " << std::to_string (m_path->getLength()) << std::endl;
+
+        // Reset ourself.
+        reset();
 
         // We're finished and can begin the simulation.
         return true;
@@ -103,27 +107,51 @@ bool PathSimulator::initialise (OgreApplication* const ogre)
 
 void PathSimulator::reset()
 {
-    // Reset the badger.
-    m_badger->reset();
-
     // Start the path again.
-    m_distanceTravelled = 0.f;
-    m_segmentStart = 0.f;
-    m_segmentEnd = 0.f;
     obtainSegment (0);
+    m_segmentIndex = 0;
+    m_time = 0.f;
+    m_timeForSegment = 0.f;
+
+    // Move the badger to the start point.
+    m_badger->reset();
+    m_badger->setPosition (m_segment->getPoint (0));
+    m_badger->setMaxSpeed (100.f);
 }
 
 
 void PathSimulator::update (const float deltaTime)
 {
-    // Correct our distance value.
-    updateDistance (deltaTime);
+    m_timeForSegment += deltaTime;
+    
+    // Obtain the tangent vector.
+    const auto tangent      = m_segment->curvePoint (m_time, Derivative::First);
 
-    // Use the correct segment.
-    updateSegment();
+    const float velocity    = tangent.length();
 
-    // Move the badger according to the curve.
-    updateBadger();
+    const float inverse     = 1 / velocity;
+
+    const float modifier    = m_path->getLength() / 10.f / 60.f;
+
+    m_time                  += inverse * modifier;
+
+    const auto curve        = m_segment->curvePoint (m_time);
+
+    m_badger->setPosition (curve);
+
+    const auto correctTanget = m_segment->curvePoint (m_time, Derivative::First);
+
+    m_badger->getNode()->setDirection (correctTanget.normalisedCopy(), Ogre::Node::TS_WORLD, Ogre::Vector3::UNIT_Z);
+
+    if (m_time >= 1.f)
+    {
+        // The first segment will when the application starts will be longer than normal because loading times effect the calculations.
+        //std::cout << "Segment length: " << std::to_string (m_segment->getLength()) << " completed in " << std::to_string (m_timeForSegment) << " seconds."<< std::endl;
+
+        // Reset the time counter and obtain the next segment.
+        m_timeForSegment = 0.f;
+        obtainSegment (++m_segmentIndex);
+    }
 }
 
 #pragma endregion
@@ -146,10 +174,11 @@ void PathSimulator::loadBadger (OgreApplication* const ogre, Ogre::SceneNode* co
 void PathSimulator::loadPath (OgreApplication* const ogre, Ogre::SceneNode* const root)
 {
     // Obtain a working xml file location.
-    const auto location = obtainFileLocation();
+    const auto location = "../../path.xml";//obtainFileLocation();
 
     // Attempt to initialise the path.
     m_path = std::make_unique<Path>();
+    m_path->setWaypointScale ({ 200.f, 200.f, 200.f });
     
     if (!m_path->loadFromXML (location, ogre, root))
     {
@@ -187,21 +216,6 @@ std::string PathSimulator::obtainFileLocation() const
 
 #pragma region Simulation management
 
-void PathSimulator::obtainSegmentByDistance()
-{
-    // Obtain the desired segment.
-    m_segment = m_path->segmentByDistance (m_distanceTravelled);
-
-    // Ensure it's valid.
-    if (m_segment)
-    {
-        // Adjust our start and end values.
-        m_segmentStart = m_segmentEnd;
-        m_segmentEnd = m_segmentStart + m_segment->getLength();
-    }
-}
-
-
 void PathSimulator::obtainSegment (const size_t segment)
 {
     // Clamp the segment value between the path count.
@@ -213,28 +227,9 @@ void PathSimulator::obtainSegment (const size_t segment)
     // Ensure it's valid.
     if (m_segment)
     {
-        // Adjust our start and end values.
-        m_segmentStart = m_segmentEnd;
-        m_segmentEnd = m_segmentStart + m_segment->getLength();
+        // Adjust the time value back a step.
+        m_time = 0.f;
     }
-}
-
-
-void PathSimulator::updateDistance (const float deltaTime)
-{
-    
-}
-
-
-void PathSimulator::updateSegment()
-{
-    
-}
-
-
-void PathSimulator::updateBadger()
-{
-    
 }
 
 #pragma endregion

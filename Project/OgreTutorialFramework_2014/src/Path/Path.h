@@ -118,12 +118,20 @@ class Path final
         /// <param name="pointNumber"> The index to use when adding it to the segment. </param>
         void addPointFromXML (Segment& segment, const pugi::xml_node& pointNode, const size_t pointIndex);
         
-        /// <summary> Creates a waypoint in the scene at the given position </summary>
+        /// <summary> Creates every waypoint in the simulation. </summary>
+        /// <param name="ogre"> Used to initialse the waypoint entities. </param>
+        /// <param name="root"> The node to attach the waypoints to. </param>
+        /// <param name="name"> The unique name to use in waypoint generation. </param>
+        void constructWaypoints (OgreApplication* const ogre, Ogre::SceneNode* const root, const std::string& name);
+
+        /// <summary> Creates a waypoint in the scene. </summary>
         /// <param name="ogre"> Used to initialse the waypoint entity. </param>
         /// <param name="root"> The node to attach the waypoint to. </param>
-        /// <param name="name"> The unique name to call the waypoing. </param>
-        /// <param name="position"> Where to place the waypoint. </param>
-        void createWaypoint (OgreApplication* const ogre, Ogre::SceneNode* const root, const std::string& name, const Ogre::Vector3& position);
+        /// <param name="name"> The unique name to call the waypoint. </param>
+        Waypoint* createWaypoint (OgreApplication* const ogre, Ogre::SceneNode* const root, const std::string& name, const Ogre::Vector3& position);
+
+        /// <summary> This brutal function enforces all curves to be stichted together so that there is visual continuity in the path. </summary>
+        void enforceContinuity();
 
         #pragma endregion
 
