@@ -115,7 +115,7 @@ class Path final
         /// <summary> Parses through an XML node attempting to construct a point for a given segment. </summary>
         /// <param name="segment"> The segment to add the generated point to. </param>
         /// <param name="pointNode"> The node to parse. </param>
-        /// <param name="pointNumber"> The index to use when adding it to the segment. </param>
+        /// <param name="pointIndex"> The index to use when adding it to the segment. </param>
         void addPointFromXML (Segment& segment, const pugi::xml_node& pointNode, const size_t pointIndex);
         
         /// <summary> Creates every waypoint in the simulation. </summary>
@@ -137,7 +137,7 @@ class Path final
 
         #pragma region Implementation data
 
-        std::vector<std::shared_ptr<Segment>>   m_segments      {  };               //!< A vector of segments, used to represent an entire bezier curve segment of the total path.
+        std::vector<std::shared_ptr<Segment>>   m_segments      {  };               //!< A vector of segments, used to represent an entire path of bezier curve segments.
         std::vector<std::unique_ptr<Waypoint>>  m_waypoints     {  };               //!< A vector of waypoints used to visually represent the track.
 
         Ogre::Vector3                           m_waypointScale { 1.f, 1.f, 1.f };  //!< The scale vector used for waypoints. This should be controlled externally.
