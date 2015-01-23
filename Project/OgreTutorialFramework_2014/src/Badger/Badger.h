@@ -31,6 +31,13 @@ class Badger final : public IActor
         
         #pragma region Getters and setters
 
+        float getWheelBase() const              { return m_wheelBase; }
+        float getAcceleration() const           { return m_acceleration; }
+        float getBrakePower() const             { return m_brakePower; }
+        float getCurrentSpeed() const           { return m_currentSpeed; }
+        float getMaxSpeed() const               { return m_maxSpeed; }
+
+
         /// <summary> Sets the maximum speed the badger can reach. </summary>
         void setMaxSpeed (const float speed)    { m_maxSpeed = speed; }
 

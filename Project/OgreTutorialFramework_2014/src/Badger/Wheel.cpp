@@ -10,11 +10,6 @@
 
 #pragma region Constructors and destructor
 
-Badger::Wheel::Wheel()
-{
-}
-
-
 Badger::Wheel::Wheel (Wheel&& move)
 {
     *this = std::move (move);
@@ -87,7 +82,7 @@ bool Badger::Wheel::initialise (OgreApplication* const ogre, Ogre::SceneNode* ro
         return true;
     }
 
-    catch (std::exception& error)
+    catch (const std::exception& error)
     {
         std::cerr << "An exception was caught in Badger::Wheel::initialise(): " << error.what() << std::endl;
     }

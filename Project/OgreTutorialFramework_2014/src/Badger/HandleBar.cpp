@@ -10,10 +10,6 @@
 
 #pragma region Constructors and destructor
 
-Badger::HandleBar::HandleBar()
-{
-}
-
 
 Badger::HandleBar::HandleBar (HandleBar&& move)
 {
@@ -85,7 +81,7 @@ bool Badger::HandleBar::initialise (OgreApplication* const ogre, Ogre::SceneNode
         return true;
     }
 
-    catch (std::exception& error)
+    catch (const std::exception& error)
     {
         std::cerr << "An exception was caught in Badger::HandleBar::initialise(): " << error.what() << std::endl;
     }

@@ -22,7 +22,7 @@ class Simulation final
 
         #pragma region Constructors and destruction
 
-        Simulation() = default;
+        Simulation()                                    = default;
 
         Simulation (Simulation&& move);
         Simulation& operator= (Simulation&& move);

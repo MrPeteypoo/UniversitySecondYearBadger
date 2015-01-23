@@ -43,6 +43,8 @@ class IActor
 
         #pragma region Getters and setters
 
+        const std::unique_ptr<Ogre::SceneNode>& getNode() const     { return m_node; }
+
         const Ogre::Vector3& getPosition() const                    { return m_node->getPosition(); }
         const Ogre::Quaternion& getOrientation() const              { return m_node->getOrientation(); }
         const Ogre::Vector3& getScale() const                       { return m_node->getScale(); }

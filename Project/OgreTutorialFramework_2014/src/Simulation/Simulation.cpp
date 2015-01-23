@@ -2,8 +2,14 @@
 
 
 
+// STL headers.
+#include <iostream>
+
+
+
 // Engine headers.
 #include <Simulation/BadgerSimulator.h>
+#include <Simulation/PathSimulator.h>
 
 
 
@@ -49,14 +55,25 @@ void Simulation::initialise (OgreApplication* const ogre)
 {
     // Add the simulators.
     m_simulators.push_back (new BadgerSimulator());
-    //m_simulators.push_back (new PathSimulator());
+    m_simulators.push_back (new PathSimulator());
 
     // Initialise each simulator.
-    for (auto simulator : m_simulators)
+    for (unsigned int i = 0; i < m_simulators.size(); ++i)
     {
+        // Cache the simulator.
+        auto& simulator = m_simulators[i];
+
+        // Ensure it's valid.
         if (simulator)
         {
-            simulator->initialise (ogre);
+            // Report an error and remove the ISimulator if it can't be initialised.
+            if (!simulator->initialise (ogre))
+            {
+                delete simulator;
+                simulator = nullptr;
+
+                std::cout << "Simulation::initialise(): unable to initialise an ISimulator." << std::endl;
+            }
         }
     }
 }
