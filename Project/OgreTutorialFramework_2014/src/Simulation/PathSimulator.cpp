@@ -57,6 +57,29 @@ PathSimulator::~PathSimulator()
 #pragma endregion
 
 
+#pragma region Getters and setters
+
+void PathSimulator::setTimeToComplete (const float time)
+{
+    // Silently ignore 0.f.
+    if (time != 0.f)
+    {
+        m_timeToComplete = std::abs (time);
+    }
+}
+
+
+void PathSimulator::movementSpeed (const float distancePerSecond)
+{
+    if (distancePerSecond != 0.f)
+    {
+        m_timeToComplete = m_path->getLength() / std::abs (distancePerSecond);
+    }
+}
+
+#pragma endregion
+
+
 #pragma region ISimulator functionality
 
 bool PathSimulator::initialise (OgreApplication* const ogre)
@@ -121,31 +144,49 @@ void PathSimulator::reset()
 
 
 void PathSimulator::update (const float deltaTime)
-{
-    m_timeForSegment += deltaTime;
+{    
+    /// We can use the length of the tangent vector to normalise the time it takes to move across an arc length. This works by 
+    /// calculating the first derivative of a point on the bezier curve (tangent vector), the magnitude represents the speed of
+    /// the curve at that point. If we then inverse the magnitude we can increment time by a correct value to maintain a smooth 
+    /// curve.
+    ///
+    /// By default this method at 60 units per second on any given curve which we can take advantage of to ensure the path is
+    /// at the pace we desire.
+    ///
+    /// I chose to use this method of interpolating through the arc length of the complete path due to the ease at which it can
+    /// be done, and also because of the memory savings since we don't have to store arc length/paramatric entry pairs. The time
+    /// it takes to calculate at runtime is also likely to be less since we can cache the tangent vector of the current point and
+    /// we don't need to lookup the current distance we're at. Load time is also comparable, we need to segment the curve to
+    /// determine the total path/curve length but we save on time by not storing each segments value.
     
-    // Obtain the tangent vector.
+    // We need to calculate the distance we should move each frame based on the desired time to completion.
+    const float arcDistancePerFrame { m_path->getLength() / m_timeToComplete * deltaTime };
+
+    // We need to update the time it's taken to move across the current segment. This is useful for showing consistency.
+    m_timeForSegment += deltaTime;
+
+    // Increase our time value by a calculated increment.
+    m_time += timeIncrement() * arcDistancePerFrame;
+
+    // Obtain the position and tangent of the desired point of the bezier curve.
+    const auto position     = m_segment->curvePoint (m_time);
     const auto tangent      = m_segment->curvePoint (m_time, Derivative::First);
+    // This works, it's not just not used: const auto curvature    = m_segment->curvePoint (m_time, Derivative::Second);
 
-    const float velocity    = tangent.length();
+    // Update the badgers position and orientation.
+    m_badger->setPosition (position);
+    m_badger->getNode()->setDirection (tangent.normalisedCopy(), Ogre::Node::TS_WORLD, Ogre::Vector3::UNIT_Z);
 
-    const float inverse     = 1 / velocity;
+    // Move the badgers wheels. Unfortunately I haven't had time to try and rotate the wheels properly.
+    m_badger->revolveWheels (arcDistancePerFrame);
 
-    const float modifier    = m_path->getLength() / 20.f / 60.f;
+    // Cache the tangent vector of the desired point.
+    m_previousTangent = tangent;
 
-    m_time                  += inverse * modifier;
-
-    const auto curve        = m_segment->curvePoint (m_time);
-
-    m_badger->setPosition (curve);
-
-    const auto correctTanget = m_segment->curvePoint (m_time, Derivative::First);
-
-    m_badger->getNode()->setDirection (correctTanget.normalisedCopy(), Ogre::Node::TS_WORLD, Ogre::Vector3::UNIT_Z);
-
+    // Check if we need to move on to the next segment.
     if (m_time >= 1.f)
     {
-        // The first segment will when the application starts will be longer than normal because loading times effect the calculations.
+        // The first segment will when the application starts will be longer than normal because loading times effect deltaTime.
         std::cout << "Segment length: " << std::to_string (m_segment->getLength()) << " completed in " << std::to_string (m_timeForSegment) << " seconds."<< std::endl;
 
         // Reset the time counter and obtain the next segment.
@@ -229,7 +270,23 @@ void PathSimulator::obtainSegment (const size_t segment)
         // Adjust the time value back a step.
         m_time -= 1.f;
         m_timeForSegment = 0.f;
+
+        // Cache the tangent of this point.
+        m_previousTangent = m_segment->curvePoint (m_time, Derivative::First);
     }
+}
+
+
+float PathSimulator::timeIncrement() const
+{
+    // We need the magnitude of the tangent to determine how fast the curve is moving.
+    const float tangentSpeed    { m_previousTangent.length() };
+
+    // We should then inverse it to get an incrementable value. This should represent steps per second.
+    const float inverse         { 1.f / tangentSpeed };
+
+    // Return the increment.
+    return inverse;
 }
 
 #pragma endregion

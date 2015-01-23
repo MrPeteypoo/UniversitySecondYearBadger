@@ -65,6 +65,12 @@ Badger::~Badger()
 
 #pragma region Getters and setters
 
+float Badger::getTurnLimitRadians() const
+{
+    return m_handleBar->getTurnLimitRadians();
+}
+
+
 void Badger::setSpeedRate (const float speed)
 {
     // Clamp the given speed rate and then scale it to between 0.f and 1.f.
@@ -185,6 +191,20 @@ void Badger::updateSimulation (const float deltaTime)
 #pragma endregion
 
 
+#pragma region External simulation
+
+void Badger::revolveWheels (const float distance)
+{
+    // Inform each wheel that it needs to revolve.
+    for (auto& wheel : m_wheels)
+    {
+        wheel->revolve (distance);
+    }
+}
+
+#pragma endregion
+
+
 #pragma region Simulation
 
 void Badger::updateSpeed (const float deltaTime)
@@ -253,10 +273,7 @@ void Badger::moveForward (const float distance)
         m_node->setPosition (m_node->getPosition() + forward * distance);
 
         // Revolve the wheels accordingly.
-        for (auto& wheel : m_wheels)
-        {
-            wheel->revolve (distance);
-        }
+        revolveWheels (distance);
     }
 }
 

@@ -38,6 +38,21 @@ class PathSimulator final : public ISimulator
 
         #pragma endregion
 
+        #pragma region Getters and settes
+
+        /// <summary> Gets the time to complete a full path simulation in seconds. </summary>
+        float getTimeToComplete() const { return m_timeToComplete; }
+
+        /// <summary> Sets how long it should take in seconds for the path simulation to complete a cycle. </summary>
+        /// <param name="time"> Negative values will be made absolute. 0.f is ignored. </param>
+        void setTimeToComplete (const float time);
+
+        /// <summary> An alternative to setTimeToComplete. This sets the completion time based on the movement speed given. </summary>
+        /// <param name="distancePerSecond"> The distance to be travelled per second, this will not work if the simulator is not initialised. 0.f is ignored. </param>
+        void movementSpeed (const float distancePerSecond);
+
+        #pragma endregion
+
         #pragma region ISimulator functionality
 
         /// <summary> Initialises the path and badger ready for simulation. </summary>
@@ -74,12 +89,13 @@ class PathSimulator final : public ISimulator
         #pragma endregion
 
         #pragma region Simulation management
-        
-        /// <summary> Obtains the current segment based on the distance travelled. </summary>
-        void obtainSegmentByDistance();
 
         /// <summary> Obtains a segment at the specified index </summary>
         void obtainSegment (const size_t segment);
+
+        /// <summary> Calculates the inverse of the speed of the previous tangent vector, creating a step to increase time by. </summary>
+        /// <returns> The inverse of the speed, this can be manipulated by deltaTime to create a normalised speed. </returns>
+        float timeIncrement() const;
 
         #pragma endregion
 
@@ -93,8 +109,11 @@ class PathSimulator final : public ISimulator
         Ogre::Vector3                           m_previousTangent   {  };           //!< The tangent of the previous curve point, avoids calculating it again.
 
         unsigned int                            m_segmentIndex      { 0 };          //!< The current index of the current segment.
+
+        float                                   m_timeToComplete    { 20.f };        //!< How long it should take run through the entire path.
+
         float                                   m_time              { 0.f };        //!< The current time value used to track where on the curve we should be.
-        float                                   m_timeForSegment    { 0.f };
+        float                                   m_timeForSegment    { 0.f };        //!< Keeps track of how long each segment has taken to complete in seconds.
 
         #pragma endregion
 

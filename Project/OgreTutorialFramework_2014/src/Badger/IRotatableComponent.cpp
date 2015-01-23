@@ -15,6 +15,11 @@ const float tolerance   { 0.0125f };        //!< The tolerance used in detecting
 
 #pragma region Getters and setters
 
+float Badger::IRotatableComponent::getTurnLimitRadians() const
+{
+    return angleLimit;
+}
+
 float Badger::IRotatableComponent::currentYaw() const
 {
     // Calculate the yaw value.

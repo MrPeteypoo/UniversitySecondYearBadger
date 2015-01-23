@@ -20,6 +20,9 @@ class Badger::IRotatableComponent : public IActor
 
         #pragma region Getters and setters
 
+        /// <summary> Gets the angle limit of the rotatable component. </summary>
+        float getTurnLimitRadians() const;
+
         /// <summary> Gets the turn speed of the component. </summary>
         float getTurnSpeed() const                  { return m_turnSpeed; }
 

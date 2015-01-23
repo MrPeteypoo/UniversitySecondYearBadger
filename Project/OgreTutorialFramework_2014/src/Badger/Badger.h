@@ -37,6 +37,9 @@ class Badger final : public IActor
         float getCurrentSpeed() const           { return m_currentSpeed; }
         float getMaxSpeed() const               { return m_maxSpeed; }
 
+        /// <summary> Obtains the angle limit on the turn rate of the badger. </summary>
+        float getTurnLimitRadians() const;
+
 
         /// <summary> Sets the maximum speed the badger can reach. </summary>
         void setMaxSpeed (const float speed)    { m_maxSpeed = speed; }
@@ -66,6 +69,14 @@ class Badger final : public IActor
         /// <summary> Moves and rotates the badger and each component according to its current state. </summary>
         /// <param name="deltaTime"> The number of seconds passed since the last update. </param>
         void updateSimulation (const float deltaTime) override final;
+
+        #pragma endregion
+
+        #pragma region External simulation
+
+        /// <summary> Revolve the wheels by the distance given, enables external control over wheel animation. </summary>
+        /// <param name="distance"> The distance to rotate the wheels with. </param>
+        void revolveWheels (const float distance);
 
         #pragma endregion
 

@@ -188,15 +188,15 @@ bool Path::loadFromXML (const std::string& fileLocation, OgreApplication* const 
             // Move the segment into our vector. Unfortunately we can't guess how big the vector should be.
             m_segments.push_back (segment);
         }
-
-        // Now we can calculate the length of the path!
-        calculateLength (samplesPerSegment);
         
         // Check if we should stitch the curves together.
         if (forceContinuity)
         {
             enforceContinuity();
         }
+
+        // Now we can calculate the length of the path!
+        calculateLength (samplesPerSegment);
 
         // Construct the way points.
         constructWaypoints (ogre, root, pathName + "-Waypoint-");
