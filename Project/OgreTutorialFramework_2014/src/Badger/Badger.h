@@ -130,7 +130,7 @@ class Badger final : public IActor
         float                               m_wheelBase         { 8.f };        //!< The length between the front and rear wheels.
 
         float                               m_acceleration      { 15.f };       //!< How quickly the badger can change its current speed.
-        float                               m_brakePower        { 50.f };       //!< How quickly the badger can break.
+        float                               m_brakePower        { 100.f };       //!< How quickly the badger can break.
         
         float                               m_currentSpeed      { 0.f };        //!< Keeps track of how quickly the badger is currently moving.
         float                               m_maxSpeed          { 80.f };       //!< The vehicle speed in meters per second.
