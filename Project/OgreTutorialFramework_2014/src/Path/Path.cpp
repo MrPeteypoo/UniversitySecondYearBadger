@@ -350,6 +350,11 @@ Path::Waypoint* Path::createWaypoint (OgreApplication* const ogre, Ogre::SceneNo
 
 void Path::enforceContinuity()
 {
+    ///
+    /// This algorithm was written in collaboration with Daniel Wesson (N3096289), therefore it may appear very similar.
+    ///
+
+
     // Initialise the two pointer variables we will be using.
     std::shared_ptr<Segment>    previous    { m_segments.front() }, 
                                 current     { nullptr };
