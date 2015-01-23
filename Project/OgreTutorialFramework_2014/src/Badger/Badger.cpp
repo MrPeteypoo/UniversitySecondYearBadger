@@ -141,7 +141,7 @@ bool Badger::initialise (OgreApplication* const ogre, Ogre::SceneNode* const roo
         
         // Load the chasis.
         const auto entity = constructEntity (ogre, "chassis.mesh");
-        m_node.reset (constructNode (root, name, entity));
+        m_node = constructNode (root, name, entity);
 
         // Load the child nodes.
         createChildren (ogre, name);
@@ -312,19 +312,19 @@ void Badger::createChildren (OgreApplication* const ogre, const Ogre::String& na
 
     
     // Initialise each child object.
-    if (!m_handleBar->initialise (ogre, m_node.get(), name + "-HandleBar"))
+    if (!m_handleBar->initialise (ogre, m_node, name + "-HandleBar"))
     {
         throw std::runtime_error ("Badger::createChildren(), the handle bars couldn't be initialised.");
     }
 
-    if (!m_luggageRack->initialise (ogre, m_node.get(), name + "-LuggageRack"))
+    if (!m_luggageRack->initialise (ogre, m_node, name + "-LuggageRack"))
     {
         throw std::runtime_error ("Badger::createChildren(), the luggage rack couldn't be initialised.");
     }
 
     for (unsigned int i = 0; i < m_wheels.size(); ++i)
     {
-        if (!m_wheels[i]->initialise (ogre, m_node.get(), name + "-Wheel-" + std::to_string (i)))
+        if (!m_wheels[i]->initialise (ogre, m_node, name + "-Wheel-" + std::to_string (i)))
         {
             throw std::runtime_error ("Badger::createChildren(), a wheel couldn't be initialised.");
         }

@@ -147,7 +147,6 @@ void OgreApplication::CleanUp()
   sceneManager ->destroyAllLights();
   sceneManager ->destroyAllManualObjects();
   sceneManager ->destroyAllEntities();
-	
 }
 
 //\ brief Setup and initialize

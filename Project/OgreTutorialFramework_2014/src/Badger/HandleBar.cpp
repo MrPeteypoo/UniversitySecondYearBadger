@@ -72,7 +72,7 @@ bool Badger::HandleBar::initialise (OgreApplication* const ogre, Ogre::SceneNode
         const auto entity = constructEntity (ogre, "handlebar.mesh", "blue");
 
         // Construct the node.
-        m_node.reset (constructNode (root, name, entity));
+        m_node =constructNode (root, name, entity);
 
         // Reset each attribute.
         reset();

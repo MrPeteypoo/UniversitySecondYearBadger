@@ -41,6 +41,8 @@ Path& Path::operator= (Path&& move)
         m_segments = std::move (move.m_segments);
         m_waypoints = std::move (move.m_waypoints);
 
+        m_waypointScale = std::move (move.m_waypointScale);
+
         m_length = std::move (move.m_length);
     }
 

@@ -4,6 +4,10 @@
 #define _BADGER_
 
 
+// STL headers.
+#include <memory>
+
+
 // Engine headers.
 #include <Misc/IActor.h>
 

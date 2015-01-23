@@ -56,7 +56,7 @@ bool Badger::LuggageRack::initialise (OgreApplication* const ogre, Ogre::SceneNo
         const auto entity = constructEntity (ogre, "luggage_rack.mesh");
 
         // Construct the node.
-        m_node.reset (constructNode (root, name, entity, position, orientation, scale));
+        m_node= constructNode (root, name, entity, position, orientation, scale);
         
         // Simples!
         return true;

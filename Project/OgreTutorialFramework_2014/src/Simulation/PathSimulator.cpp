@@ -12,6 +12,7 @@
 #include <Badger/Badger.h>
 #include <Framework/OgreApplication.h>
 #include <Path/Segment.h>
+#include <Utility/Maths.h>
 #include <Utility/Ogre.h>
 
 
@@ -42,6 +43,9 @@ PathSimulator& PathSimulator::operator= (PathSimulator&& move)
         m_previousTangent = std::move (move.m_previousTangent);
 
         m_segmentIndex = std::move (move.m_segmentIndex);
+
+        m_timeToComplete = std::move (move.m_timeToComplete);
+
         m_time = std::move (move.m_time);
         m_timeForSegment = std::move (move.m_timeForSegment);
     }
@@ -171,11 +175,14 @@ void PathSimulator::update (const float deltaTime)
     // Obtain the position and tangent of the desired point of the bezier curve.
     const auto position     = m_segment->curvePoint (m_time);
     const auto tangent      = m_segment->curvePoint (m_time, Derivative::First);
-    // This works, it's not just not used: const auto curvature    = m_segment->curvePoint (m_time, Derivative::Second);
+    //const auto curvature    = m_segment->curvePoint (m_time, Derivative::Second);
+
+    //const auto u            = tangent.crossProduct (curvature);
+    //const auto v            = tangent.crossProduct (u);
 
     // Update the badgers position and orientation.
-    m_badger->setPosition (position);
-    m_badger->getNode()->setDirection (tangent.normalisedCopy(), Ogre::Node::TS_WORLD, Ogre::Vector3::UNIT_Z);
+    m_badger->setPosition (position);    
+    m_badger->getNode()->setDirection (tangent, Ogre::Node::TS_WORLD, Ogre::Vector3::UNIT_Z);
 
     // Move the badgers wheels. Unfortunately I haven't had time to try and rotate the wheels properly.
     m_badger->revolveWheels (arcDistancePerFrame);
@@ -214,7 +221,7 @@ void PathSimulator::loadBadger (OgreApplication* const ogre, Ogre::SceneNode* co
 void PathSimulator::loadPath (OgreApplication* const ogre, Ogre::SceneNode* const root)
 {
     // Obtain a working xml file location.
-    const auto location = "../../path.xml";//obtainFileLocation();
+    const auto location = obtainFileLocation();
 
     // Attempt to initialise the path.
     m_path = std::make_unique<Path>();

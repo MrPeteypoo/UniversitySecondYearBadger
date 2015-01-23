@@ -50,7 +50,7 @@ bool Path::Waypoint::initialise (OgreApplication* const ogre, Ogre::SceneNode* c
         const auto entity = constructEntity (ogre, "Wheel.mesh", "red");
 
         // Construct the node.
-        m_node.reset (constructNode (root, name, entity));
+        m_node = (constructNode (root, name, entity));
         
         // We're done, yay!
         return true;

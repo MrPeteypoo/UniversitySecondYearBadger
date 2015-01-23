@@ -4,10 +4,6 @@
 #define _IACTOR_
 
 
-// STL headers.
-#include <memory>
-
-
 // Forward declarations.
 class OgreApplication;
 
@@ -43,7 +39,7 @@ class IActor
 
         #pragma region Getters and setters
 
-        const std::unique_ptr<Ogre::SceneNode>& getNode() const     { return m_node; }
+        Ogre::SceneNode* const getNode() const                      { return m_node; }
 
         const Ogre::Vector3& getPosition() const                    { return m_node->getPosition(); }
         const Ogre::Quaternion& getOrientation() const              { return m_node->getOrientation(); }
@@ -84,7 +80,7 @@ class IActor
 
         #pragma region Implementation data
 
-        std::unique_ptr<Ogre::SceneNode>    m_node  { nullptr };    //!< The in-game SceneNode used to represent the actor.
+        Ogre::SceneNode*    m_node  { nullptr };    //!< The in-game SceneNode used to represent the actor.
 
         #pragma endregion
 };
