@@ -2,6 +2,20 @@
 <Path Name="BezierTest" SamplesPerSegment="200" ForceContinuity="true">
 	
 	<Segment>
+		<Point X="0" Y="4" Z="0" />
+		<Point X="0" Y="4" Z="25" />
+		<Point X="25" Y="4" Z="25" />
+		<Point X="25" Y="4" z="0" />
+	</Segment>
+	
+	<Segment>
+		<Point X="25" Y="4" Z="0" />
+		<Point X="50" Y="4" Z="50" />
+		<Point X="0" Y="4" Z="50" />
+		<Point X="50" Y="4" z="0" />
+	</Segment>
+	
+	<Segment>
         <Point X="-50" Y="4" Z="-50" />
         <Point X="-5" Y="4" Z="50" />
         <Point X="5" Y="4" Z="50" />
@@ -28,5 +42,5 @@
 		<Point X="-200" Y="4" Z="200" />
 		<Point X="200" Y="4" Z="200" />
 	</Segment>
-	
+
 </Path>

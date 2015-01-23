@@ -131,7 +131,7 @@ void PathSimulator::update (const float deltaTime)
 
     const float inverse     = 1 / velocity;
 
-    const float modifier    = m_path->getLength() / 10.f / 60.f;
+    const float modifier    = m_path->getLength() / 20.f / 60.f;
 
     m_time                  += inverse * modifier;
 
@@ -146,10 +146,9 @@ void PathSimulator::update (const float deltaTime)
     if (m_time >= 1.f)
     {
         // The first segment will when the application starts will be longer than normal because loading times effect the calculations.
-        //std::cout << "Segment length: " << std::to_string (m_segment->getLength()) << " completed in " << std::to_string (m_timeForSegment) << " seconds."<< std::endl;
+        std::cout << "Segment length: " << std::to_string (m_segment->getLength()) << " completed in " << std::to_string (m_timeForSegment) << " seconds."<< std::endl;
 
         // Reset the time counter and obtain the next segment.
-        m_timeForSegment = 0.f;
         obtainSegment (++m_segmentIndex);
     }
 }
@@ -228,7 +227,8 @@ void PathSimulator::obtainSegment (const size_t segment)
     if (m_segment)
     {
         // Adjust the time value back a step.
-        m_time = 0.f;
+        m_time -= 1.f;
+        m_timeForSegment = 0.f;
     }
 }
 

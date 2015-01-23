@@ -359,32 +359,28 @@ void Path::enforceContinuity()
         current = m_segments[i];
 
         // We need to calculate the angle between the directions A3-A2 and B1-B0.
-        const auto perpendicular    = (previous->getPoint (3) - previous->getPoint (2)).normalisedCopy();
-        const auto collinearGoal    = (current->getPoint (1) - current->getPoint (0)).normalisedCopy();
+        const auto perpendicular    = (previous->getPoint (3) - previous->getPoint (2));
+        const auto collinearGoal    = (current->getPoint (1) - current->getPoint (0));
 
         // Calculate the angle between the points we need to make collinear.
         const auto angle            = perpendicular.angleBetween (collinearGoal).valueDegrees();
-        
-        std::cout << std::to_string (Ogre::Degree (angle).valueRadians()) << std::endl;
 
         // Rotate each point.
         const auto rotation = util::rotationY (std::abs (angle));
-        current->rotate (rotation);        
-        
+        current->rotate (rotation);
 
         // We must make sure that A3 and B0 match by translating the entire curve.
-        const auto matchPoints = previous->getPoint (3) - current->getPoint (0);
+        const auto matchPoints      = previous->getPoint (3) - current->getPoint (0);
         current->translate (matchPoints);
 
         // Now we need to ensure that we have tangential continuity.
-        const auto direction        = (previous->getPoint(3) - previous->getPoint (2));
-        const auto lengthCorrection = direction.length();
+        const auto lengthCorrection = (previous->getPoint(3) - previous->getPoint (2));
 
         // Translate B1-B3 to B0.
         current->translate (current->getPoint(0) - current->getPoint (1));
 
         // Ensure B1 has an equal distance from B0 and A2.
-        current->translate (direction);
+        current->translate (lengthCorrection);
 
         // Correct B0.
         current->translatePoint (0, previous->getPoint (3) - current->getPoint (0));
