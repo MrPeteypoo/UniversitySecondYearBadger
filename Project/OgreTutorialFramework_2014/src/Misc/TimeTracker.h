@@ -17,7 +17,7 @@ class TimeTracker final
         /// Allows the specifying of minimum and maximum values for the tracker. Values will be swapped if min is more than max. 
         /// </summary>
         /// <param name="min"> The lowest accepted minimum is zero. </param>
-        /// <param
+        /// <param name="max"> Any positive value is accepted provided it is >= 0.f </param>
         TimeTracker (const float min, const float max);
 
         TimeTracker (TimeTracker&& move);
@@ -55,7 +55,7 @@ class TimeTracker final
         /// <param name="target"> The point between minimum and maximum, 0.f to 1.f. </param>
         void setNormalisedTarget (const float target);
 
-        /// <summary> Sets the current value to the neutral position (in-between min and max). </summary>
+        /// <summary> Sets the current value to the neutral position (between min and max). </summary>
         void setToNeutral()         { m_current = neutral(); }
 
         /// <summary> Sets the current value to the minimum value. </summary>
@@ -71,7 +71,7 @@ class TimeTracker final
 
         #pragma region Tracking functionality
 
-        /// <summary> Calculates the point in-between the minimum and maximum values. </summary>
+        /// <summary> Calculates the point between the minimum and maximum values. </summary>
         float neutral() const           { return (m_min + m_max) / 2.f; }
 
         /// <summary> Calculates the current progress of the TimeTracker as a percentage. </summary>

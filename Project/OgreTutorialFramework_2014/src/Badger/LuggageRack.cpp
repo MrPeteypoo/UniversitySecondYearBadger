@@ -10,11 +10,6 @@
 
 #pragma region Constructors and destructor
 
-Badger::LuggageRack::LuggageRack()
-{
-}
-
-
 Badger::LuggageRack::LuggageRack (LuggageRack&& move)
 {
     *this = std::move (move);
@@ -25,6 +20,7 @@ Badger::LuggageRack& Badger::LuggageRack::operator= (LuggageRack&& move)
 {
     if (this != &move)
     {
+        // IActor
         m_node = std::move (move.m_node);
     }
 
@@ -60,13 +56,13 @@ bool Badger::LuggageRack::initialise (OgreApplication* const ogre, Ogre::SceneNo
         const auto entity = constructEntity (ogre, "luggage_rack.mesh");
 
         // Construct the node.
-        m_node.reset (constructNode (root, name, entity, position, orientation, scale));
+        m_node= constructNode (root, name, entity, position, orientation, scale);
         
-
+        // Simples!
         return true;
     }
 
-    catch (std::exception& error)
+    catch (const std::exception& error)
     {
         std::cerr << "An exception was caught in Badger::LuggageRack::initialise(): " << error.what() << std::endl;
     }

@@ -9,7 +9,7 @@
 
 
 /// <summary>
-/// A basic wheel class which will continously roll forward
+/// A basic wheel class which features clamped y-rotation functionality and can be revolved by a given distance at will.
 /// </summary>
 class Badger::Wheel final : public Badger::IRotatableComponent
 {
@@ -17,15 +17,15 @@ class Badger::Wheel final : public Badger::IRotatableComponent
         
         #pragma region Constructors and destructor
 
-	    Wheel();
+	    Wheel()                                 = default;
 
         Wheel (Wheel&& move);
         Wheel& operator= (Wheel&& move);
 
-	    ~Wheel();
+	    ~Wheel() override final;
 
-        Wheel (const Wheel& copy)             = delete;
-        Wheel& operator= (const Wheel& copy)  = delete;
+        Wheel (const Wheel& copy)               = delete;
+        Wheel& operator= (const Wheel& copy)    = delete;
 
         #pragma endregion
 
@@ -47,17 +47,14 @@ class Badger::Wheel final : public Badger::IRotatableComponent
         
         #pragma region Actor functionality
                 
-        /// <summary>
-        /// Initialises the Wheel, this will load the object at a default position.
-        /// <returns> Returns whether the initialisation was successful. </returns>
-        /// </summary>
+        /// <summary> Initialises the Wheel, this will load the object at a default position. </summary>
         /// <param name="ogre"> The OgreApplication used for creating entities. </param>
         /// <param name="root"> The SceneNode to attach the Wheel to. </param>
+        /// <param name="name"> The unique name for the scene node. </param>
+        /// <returns> Returns whether the initialisation was successful. </returns>
         bool initialise (OgreApplication* const ogre = nullptr, Ogre::SceneNode* const root = nullptr, const Ogre::String& name = { }) override final;
 
-        /// <summary>
-        /// This will ensure that the orientation of the wheels proceeds to the target point as time passes.
-        /// </summary>
+        /// <summary> This will ensure that the orientation of the wheels proceeds to the target point as time passes. </summary>
         /// <param name="deltaTime"> The number of seconds passed since the last update. </param>
         void updateSimulation (const float deltaTime) override final;
 
@@ -75,7 +72,7 @@ class Badger::Wheel final : public Badger::IRotatableComponent
 
         #pragma region Implementation data
 
-        float       m_diameter          { 5.f };    //!< The wheel diameter in metres. 
+        float       m_diameter          { 7.f };    //!< The wheel diameter in metres. 
         float       m_revolveModifier   { 1.f };    //!< A modifier used to change the way revolutions are applied. Should be clamped between -1.f and 1.f, fixes wrong rotation direction.
 
         #pragma endregion

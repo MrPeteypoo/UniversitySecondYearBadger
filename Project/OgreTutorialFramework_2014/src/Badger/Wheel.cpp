@@ -10,11 +10,6 @@
 
 #pragma region Constructors and destructor
 
-Badger::Wheel::Wheel()
-{
-}
-
-
 Badger::Wheel::Wheel (Wheel&& move)
 {
     *this = std::move (move);
@@ -52,6 +47,9 @@ Badger::Wheel::~Wheel()
 
 void Badger::Wheel::reset()
 {
+    // We don't reset the position or orientation because we just can't know how the wheels should be placed.
+    m_node->setScale ({ 1.f, 1.f, 1.f });
+
     m_targetTurn = 0.f;
     m_node->yaw (Ogre::Radian (0.f));
 }
@@ -70,17 +68,12 @@ bool Badger::Wheel::initialise (OgreApplication* const ogre, Ogre::SceneNode* ro
         {
             throw std::invalid_argument ("Badger::Wheel::initialise(), required parameter 'ogre' or 'root' is a nullptr.");
         }
-        
-        // Create parameters.
-        const Ogre::Vector3     position    { 0.f, 0.0182f, 0.01f };
-        const Ogre::Quaternion  orientation { };
-        const Ogre::Vector3     scale       { 1.f, 1.f, 1.f };
 
         // Initialise the entity.
         const auto entity = constructEntity (ogre, "Wheel.mesh", "blue");
 
         // Construct the node.
-        m_node.reset (constructNode (root, name, entity, position, orientation, scale));
+        m_node = constructNode (root, name, entity);
 
         // Reset the tracker.
         reset();
@@ -89,7 +82,7 @@ bool Badger::Wheel::initialise (OgreApplication* const ogre, Ogre::SceneNode* ro
         return true;
     }
 
-    catch (std::exception& error)
+    catch (const std::exception& error)
     {
         std::cerr << "An exception was caught in Badger::Wheel::initialise(): " << error.what() << std::endl;
     }
@@ -120,12 +113,12 @@ void Badger::Wheel::revolve (const float distance)
     const float fullRevolution  { Ogre::Math::TWO_PI },
                 pi              { Ogre::Math::PI };
 
-    // Calculate how much to revolve the wheel by. Convert the diameter to centimetres before calculating the distance.
-    const float distancePerRev  { m_diameter  * pi },
-                toRotate        { fullRevolution * (distance / distancePerRev) * m_revolveModifier };
+    // Calculate how much to revolve the wheel by.
+    const float circumference   { m_diameter  * pi },
+                toRotate        { fullRevolution * (distance / circumference) * m_revolveModifier };
 
     // Rotate the wheel.
-    const auto  rotation         = Ogre::Quaternion (Ogre::Radian (toRotate), Ogre::Vector3::UNIT_Y);
+    const auto  rotation        = Ogre::Quaternion (Ogre::Radian (toRotate), Ogre::Vector3::UNIT_Y);
     
     m_node->rotate (rotation, Ogre::Node::TS_LOCAL);
 }

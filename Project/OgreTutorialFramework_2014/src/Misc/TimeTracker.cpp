@@ -31,10 +31,12 @@ TimeTracker& TimeTracker::operator= (TimeTracker&& move)
 {
     if (this != &move)
     {
+        // TimeTracker.
         m_min = std::move (move.m_min);
         m_max = std::move (move.m_max);
         m_current = std::move (move.m_current);
         m_target = std::move (move.m_target);
+
         m_isAscending = std::move (move.m_isAscending);
     }
 

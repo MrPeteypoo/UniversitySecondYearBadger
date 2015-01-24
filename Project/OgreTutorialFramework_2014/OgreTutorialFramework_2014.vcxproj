@@ -98,14 +98,19 @@
     <ClCompile Include="src\Framework\Camera.cpp" />
     <ClCompile Include="src\Framework\OgreApplication.cpp" />
     <ClCompile Include="src\Framework\OgreWrapper.cpp" />
-    <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\Misc\IActor.cpp" />
-    <ClCompile Include="src\Simulation\Simulation.cpp" />
-    <ClCompile Include="src\Simulation\TimeTracker.cpp" />
-    <ClCompile Include="src\stdafx.cpp">
+    <ClCompile Include="src\main.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\Misc\IActor.cpp" />
+    <ClCompile Include="src\Path\Path.cpp" />
+    <ClCompile Include="src\Path\Segment.cpp" />
+    <ClCompile Include="src\Path\Waypoint.cpp" />
+    <ClCompile Include="src\Simulation\BadgerSimulator.cpp" />
+    <ClCompile Include="src\Misc\TimeTracker.cpp" />
+    <ClCompile Include="src\Simulation\PathSimulator.cpp" />
+    <ClCompile Include="src\Simulation\Simulation.cpp" />
+    <ClCompile Include="src\ThirdParty\pugixml.cpp" />
     <ClCompile Include="src\Utility\Maths.cpp" />
     <ClCompile Include="src\Utility\Ogre.cpp" />
   </ItemGroup>
@@ -119,9 +124,17 @@
     <ClInclude Include="src\Framework\OgreApplication.h" />
     <ClInclude Include="src\Framework\OgreWrapper.h" />
     <ClInclude Include="src\Misc\IActor.h" />
-    <ClInclude Include="src\Simulation\TimeTracker.h" />
+    <ClInclude Include="src\Path\Path.h" />
+    <ClInclude Include="src\Path\Segment.h" />
+    <ClInclude Include="src\Simulation\ISimulator.h" />
+    <ClInclude Include="src\Misc\TimeTracker.h" />
+    <ClInclude Include="src\Simulation\BadgerSimulator.h" />
+    <ClInclude Include="src\Simulation\PathSimulator.h" />
     <ClInclude Include="src\Simulation\Simulation.h" />
+    <ClInclude Include="src\Path\Waypoint.h" />
     <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\ThirdParty\pugiconfig.hpp" />
+    <ClInclude Include="src\ThirdParty\pugixml.hpp" />
     <ClInclude Include="src\Utility\Maths.h" />
     <ClInclude Include="src\Utility\Ogre.h" />
   </ItemGroup>

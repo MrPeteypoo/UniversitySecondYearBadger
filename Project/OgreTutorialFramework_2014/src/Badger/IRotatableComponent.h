@@ -20,6 +20,9 @@ class Badger::IRotatableComponent : public IActor
 
         #pragma region Getters and setters
 
+        /// <summary> Gets the angle limit of the rotatable component. </summary>
+        float getTurnLimitRadians() const;
+
         /// <summary> Gets the turn speed of the component. </summary>
         float getTurnSpeed() const                  { return m_turnSpeed; }
 
@@ -43,7 +46,7 @@ class Badger::IRotatableComponent : public IActor
 
         /// <summary> Rotates the object on a given axis based on the target turn and turn speed values available. </summary>
         /// <param name="axis"> The axis the component should be rotated on. </param>
-        /// <param name="space"> The TransformSpace used to rotate the object, commonly TS_PARENT and TS_LOCAL. </param>
+        /// <param name="space"> How the rotation should be applied to the component, commonly TS_PARENT and TS_LOCAL. </param>
         /// <param name="deltaTime"> The delta time used to normalise the rotation speed. </param>
         void rotateComponent (const Ogre::Vector3& axis, const Ogre::Node::TransformSpace space, const float deltaTime);
         
