@@ -190,7 +190,7 @@ Ogre::Vector3 Path::Segment::curvePosition (const float delta) const
 
     // Now for each part of the equation.
     const auto  first   = inverseDeltaCubed * m_points[0],
-                second  = 3.f * delta * inverseDeltaSqr * m_points[1],
+                second  = 3 * delta * inverseDeltaSqr * m_points[1],
                 third   = 3 * deltaSqr * inverseDelta * m_points[2],
                 last    = deltaCubed * m_points[3];
 
